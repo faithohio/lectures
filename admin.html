@@ -4,15 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin — Lecture Referrals</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --ink: #0f0e0c; --cream: #faf7f2; --gold: #c9933a; --gold-light: #f0d9a8;
-      --muted: #7a7469; --card: #ffffff; --border: #e8e2d9;
-      --success: #2d6a4f; --danger: #b5433a; --bg: #f2ede6;
+      --ink: #0d0d0d;
+      --red: #c0181a;
+      --red-dark: #96100f;
+      --red-light: #fdf0f0;
+      --gold: #c9933a;
+      --gold-light: #f0d9a8;
+      --muted: #6b6b6b;
+      --card: #ffffff;
+      --border: #e2e2e2;
+      --bg: #f0f0f0;
+      --success: #1e6840;
+      --danger: #c0181a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; }
+    body { background: var(--bg); font-family: 'Anybody', sans-serif; color: var(--ink); min-height: 100vh; }
 
     /* ── LOGIN ── */
     #login-screen {
@@ -21,53 +30,61 @@
     }
     #login-screen::before {
       content: ''; position: fixed; inset: 0; pointer-events: none;
-      background: repeating-linear-gradient(-45deg, transparent, transparent 22px, rgba(201,147,58,.05) 22px, rgba(201,147,58,.05) 23px);
+      background: repeating-linear-gradient(-45deg, transparent, transparent 22px, rgba(192,24,26,.06) 22px, rgba(192,24,26,.06) 23px);
     }
     .login-card {
       background: var(--card); border-radius: 14px; padding: 2.4rem 2rem; width: 100%; max-width: 380px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4); position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5); position: relative;
+      border-top: 4px solid var(--red);
     }
     .login-card .lock { font-size: 2rem; margin-bottom: 1rem; }
-    .login-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: .3rem; }
+    .login-card h2 {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: 1.7rem; font-weight: 400; margin-bottom: .3rem; letter-spacing: .02em;
+    }
     .login-card p { font-size: .88rem; color: var(--muted); margin-bottom: 1.8rem; }
 
-    label { display: block; font-size: .8rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    label { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
     input[type="password"] {
       width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem;
-      font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink); background: var(--cream);
+      font-family: 'Anybody', sans-serif; font-size: 1rem; color: var(--ink); background: #fafafa;
       transition: border-color .2s, box-shadow .2s; outline: none; margin-bottom: 1rem;
     }
-    input[type="password"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,147,58,.15); background: #fff; }
+    input[type="password"]:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,24,26,.12); background: #fff; }
     input[type="text"] {
       width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .65rem 1rem .65rem 2.4rem;
-      font-family: 'DM Sans', sans-serif; font-size: .9rem; background: var(--card); outline: none; transition: border-color .2s; color: var(--ink);
+      font-family: 'Anybody', sans-serif; font-size: .9rem; background: var(--card); outline: none; transition: border-color .2s; color: var(--ink);
     }
-    input[type="text"]:focus { border-color: var(--gold); }
+    input[type="text"]:focus { border-color: var(--red); }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-      padding: .8rem 1.6rem; border-radius: 8px; font-family: 'DM Sans', sans-serif;
-      font-size: .95rem; font-weight: 500; cursor: pointer; border: none; transition: all .2s; width: 100%;
+      padding: .8rem 1.6rem; border-radius: 8px; font-family: 'Anybody', sans-serif;
+      font-size: .95rem; font-weight: 700; cursor: pointer; border: none; transition: all .2s; width: 100%;
     }
-    .btn-primary { background: var(--ink); color: var(--cream); }
-    .btn-primary:hover { background: #2a2720; transform: translateY(-1px); }
+    .btn-primary { background: var(--red); color: #fff; }
+    .btn-primary:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(192,24,26,.35); }
     .btn-outline-sm {
-      background: transparent; border: 1.5px solid var(--border); color: var(--muted);
+      background: transparent; border: 1.5px solid rgba(255,255,255,.2); color: rgba(255,255,255,.8);
       padding: .45rem .9rem; border-radius: 6px; cursor: pointer; font-size: .82rem;
-      font-family: 'DM Sans', sans-serif; transition: all .2s; white-space: nowrap;
+      font-family: 'Anybody', sans-serif; font-weight: 500; transition: all .2s; white-space: nowrap;
     }
-    .btn-outline-sm:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-outline-sm:hover { border-color: rgba(255,255,255,.6); color: #fff; background: rgba(255,255,255,.08); }
     .err { font-size: .82rem; color: var(--danger); margin-top: .4rem; display: none; }
 
     /* ── ADMIN LAYOUT ── */
     #admin-screen { display: none; }
 
     header {
-      background: var(--ink); color: var(--cream); padding: 1.2rem 2rem;
+      background: var(--ink); color: #fff; padding: 1.2rem 2rem;
       display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      border-bottom: 3px solid var(--red);
     }
-    .header-left h1 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
-    .header-left p { font-size: .82rem; color: #c9c4bb; margin-top: .2rem; }
+    .header-left h1 {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: 1.5rem; font-weight: 400; letter-spacing: .02em;
+    }
+    .header-left p { font-size: .82rem; color: #9a9a9a; margin-top: .2rem; }
     .header-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
 
     main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.2rem; }
@@ -77,9 +94,13 @@
     .stat-card {
       background: var(--card); border: 1px solid var(--border); border-radius: 10px;
       padding: 1.2rem 1.4rem; box-shadow: 0 1px 8px rgba(0,0,0,.05);
+      border-top: 3px solid var(--red);
     }
-    .stat-label { font-size: .78rem; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: .4rem; }
-    .stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--ink); }
+    .stat-label { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: .4rem; }
+    .stat-value {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: 2.2rem; font-weight: 400; color: var(--ink); letter-spacing: .02em;
+    }
     .stat-sub { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
 
     /* ── TOOLBAR ── */
@@ -89,18 +110,25 @@
 
     /* ── TABLE ── */
     .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
-    .table-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem; }
-    .table-header h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; }
-    .table-header .count { font-size: .82rem; color: var(--muted); }
+    .table-header {
+      padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem;
+      background: var(--ink); color: #fff;
+    }
+    .table-header h2 {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: 1.2rem; font-weight: 400; letter-spacing: .02em;
+    }
+    .table-header .count { font-size: .82rem; color: #9a9a9a; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-    thead tr { background: var(--cream); }
-    thead th { padding: .75rem 1.2rem; text-align: left; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+    thead tr { background: #f5f5f5; }
+    thead th { padding: .75rem 1.2rem; text-align: left; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
     tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
-    tbody tr:hover { background: #fdf9f4; }
+    tbody tr:hover { background: #fff8f8; }
     tbody td { padding: .75rem 1.2rem; vertical-align: middle; }
-    .tag { display: inline-block; background: var(--gold-light); color: #7a5c1e; font-size: .73rem; font-weight: 600; padding: .18rem .55rem; border-radius: 20px; white-space: nowrap; }
-    .referrer-name { font-weight: 500; }
+    .tag { display: inline-block; background: var(--red); color: #fff; font-size: .73rem; font-weight: 700; padding: .18rem .55rem; border-radius: 20px; white-space: nowrap; }
+    .referrer-name { font-weight: 600; }
     .timestamp { font-size: .8rem; color: var(--muted); }
 
     /* ── STATES ── */
@@ -109,11 +137,11 @@
     .empty-state p { font-size: .95rem; }
 
     .loading-state { text-align: center; padding: 3rem 2rem; color: var(--muted); }
-    .loader { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 1rem; }
+    .loader { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--red); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 1rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     .error-banner {
-      background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+      background: var(--red-light); border: 1px solid #f5c6c6; border-radius: 8px;
       padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: .88rem; color: var(--danger);
       display: none; align-items: flex-start; gap: .6rem;
     }
@@ -123,14 +151,14 @@
     .source-badge {
       display: inline-flex; align-items: center; gap: .4rem;
       background: #f0fdf4; border: 1px solid #bbf7d0; color: var(--success);
-      font-size: .75rem; font-weight: 600; padding: .25rem .7rem; border-radius: 20px;
+      font-size: .75rem; font-weight: 700; padding: .25rem .7rem; border-radius: 20px;
     }
     .source-badge.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
 
     .hidden { display: none !important; }
     @media (max-width: 600px) {
       header { padding: 1rem; }
-      .header-left h1 { font-size: 1.1rem; }
+      .header-left h1 { font-size: 1.2rem; }
       thead th, tbody td { padding: .6rem .8rem; }
     }
   </style>
@@ -186,7 +214,7 @@
         <span class="search-icon">🔍</span>
         <input type="text" id="search" placeholder="Search by name or phone…" oninput="renderTable()"/>
       </div>
-      <button class="btn-outline-sm" onclick="document.getElementById('search').value=''; renderTable()">Clear</button>
+      <button class="btn-outline-sm" style="border-color: var(--border); color: var(--muted);" onclick="document.getElementById('search').value=''; renderTable()">Clear</button>
     </div>
 
     <!-- Table -->
@@ -206,6 +234,7 @@
           <thead><tr><th>#</th><th>Referred By</th><th>Referral Name</th><th>Phone Number</th><th>Submitted At</th></tr></thead>
           <tbody id="admin-tbody"></tbody>
         </table>
+
         <!-- Empty -->
         <div class="empty-state hidden" id="empty-state">
           <div class="icon">📭</div>
@@ -251,7 +280,6 @@
     if (hasSheets) {
       await loadFromSheets();
     } else {
-      // Fallback to localStorage if Sheets not configured yet
       loadFromLocal();
     }
   }
