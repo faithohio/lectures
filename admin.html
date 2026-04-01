@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Lecture Referrals</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0f0e0c; --cream: #faf7f2; --gold: #c9933a; --gold-light: #f0d9a8;
+      --muted: #7a7469; --card: #ffffff; --border: #e8e2d9;
+      --success: #2d6a4f; --danger: #b5433a; --bg: #f2ede6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; }
+
+    /* ── LOGIN ── */
+    #login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+      background: var(--ink);
+    }
+    #login-screen::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 22px, rgba(201,147,58,.05) 22px, rgba(201,147,58,.05) 23px);
+    }
+    .login-card {
+      background: var(--card); border-radius: 14px; padding: 2.4rem 2rem; width: 100%; max-width: 380px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.4); position: relative;
+    }
+    .login-card .lock { font-size: 2rem; margin-bottom: 1rem; }
+    .login-card h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: .3rem; }
+    .login-card p { font-size: .88rem; color: var(--muted); margin-bottom: 1.8rem; }
+
+    label { display: block; font-size: .8rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    input[type="password"] {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink); background: var(--cream);
+      transition: border-color .2s, box-shadow .2s; outline: none; margin-bottom: 1rem;
+    }
+    input[type="password"]:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,147,58,.15); background: #fff; }
+    input[type="text"] {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .65rem 1rem .65rem 2.4rem;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; background: var(--card); outline: none; transition: border-color .2s; color: var(--ink);
+    }
+    input[type="text"]:focus { border-color: var(--gold); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: .8rem 1.6rem; border-radius: 8px; font-family: 'DM Sans', sans-serif;
+      font-size: .95rem; font-weight: 500; cursor: pointer; border: none; transition: all .2s; width: 100%;
+    }
+    .btn-primary { background: var(--ink); color: var(--cream); }
+    .btn-primary:hover { background: #2a2720; transform: translateY(-1px); }
+    .btn-outline-sm {
+      background: transparent; border: 1.5px solid var(--border); color: var(--muted);
+      padding: .45rem .9rem; border-radius: 6px; cursor: pointer; font-size: .82rem;
+      font-family: 'DM Sans', sans-serif; transition: all .2s; white-space: nowrap;
+    }
+    .btn-outline-sm:hover { border-color: var(--ink); color: var(--ink); }
+    .err { font-size: .82rem; color: var(--danger); margin-top: .4rem; display: none; }
+
+    /* ── ADMIN LAYOUT ── */
+    #admin-screen { display: none; }
+
+    header {
+      background: var(--ink); color: var(--cream); padding: 1.2rem 2rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .header-left h1 { font-family: 'Playfair Display', serif; font-size: 1.4rem; }
+    .header-left p { font-size: .82rem; color: #c9c4bb; margin-top: .2rem; }
+    .header-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.2rem; }
+
+    /* ── STATS ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 1.2rem 1.4rem; box-shadow: 0 1px 8px rgba(0,0,0,.05);
+    }
+    .stat-label { font-size: .78rem; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: .4rem; }
+    .stat-value { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--ink); }
+    .stat-sub { font-size: .8rem; color: var(--muted); margin-top: .2rem; }
+
+    /* ── TOOLBAR ── */
+    .toolbar { display: flex; gap: .8rem; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-icon { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .9rem; pointer-events: none; }
+
+    /* ── TABLE ── */
+    .table-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.05); }
+    .table-header { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem; }
+    .table-header h2 { font-family: 'Playfair Display', serif; font-size: 1.15rem; }
+    .table-header .count { font-size: .82rem; color: var(--muted); }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    thead tr { background: var(--cream); }
+    thead th { padding: .75rem 1.2rem; text-align: left; font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:hover { background: #fdf9f4; }
+    tbody td { padding: .75rem 1.2rem; vertical-align: middle; }
+    .tag { display: inline-block; background: var(--gold-light); color: #7a5c1e; font-size: .73rem; font-weight: 600; padding: .18rem .55rem; border-radius: 20px; white-space: nowrap; }
+    .referrer-name { font-weight: 500; }
+    .timestamp { font-size: .8rem; color: var(--muted); }
+
+    /* ── STATES ── */
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+    .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .empty-state p { font-size: .95rem; }
+
+    .loading-state { text-align: center; padding: 3rem 2rem; color: var(--muted); }
+    .loader { display: inline-block; width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .8s linear infinite; margin-bottom: 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-banner {
+      background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+      padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: .88rem; color: var(--danger);
+      display: none; align-items: flex-start; gap: .6rem;
+    }
+    .error-banner.show { display: flex; }
+
+    /* ── SOURCE BADGE ── */
+    .source-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: #f0fdf4; border: 1px solid #bbf7d0; color: var(--success);
+      font-size: .75rem; font-weight: 600; padding: .25rem .7rem; border-radius: 20px;
+    }
+    .source-badge.warn { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+
+    .hidden { display: none !important; }
+    @media (max-width: 600px) {
+      header { padding: 1rem; }
+      .header-left h1 { font-size: 1.1rem; }
+      thead th, tbody td { padding: .6rem .8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="lock">🔐</div>
+    <h2>Admin Access</h2>
+    <p>Enter your password to view all referral submissions.</p>
+    <div>
+      <label for="pwd">Password</label>
+      <input type="password" id="pwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter') login()"/>
+      <div class="err" id="login-err">Incorrect password. Please try again.</div>
+    </div>
+    <button class="btn btn-primary" onclick="login()">Sign In &rarr;</button>
+  </div>
+</div>
+
+<!-- ── ADMIN DASHBOARD ── -->
+<div id="admin-screen">
+  <header>
+    <div class="header-left">
+      <h1>📊 Referrals Dashboard</h1>
+      <p id="header-sub">Loading data…</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline-sm" onclick="loadData()">↻ Refresh</button>
+      <button class="btn-outline-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-outline-sm" onclick="logout()">Sign Out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-label">Total Participants</div><div class="stat-value" id="stat-participants">—</div><div class="stat-sub">people who submitted</div></div>
+      <div class="stat-card"><div class="stat-label">Total Referrals</div><div class="stat-value" id="stat-referrals">—</div><div class="stat-sub">people referred</div></div>
+      <div class="stat-card"><div class="stat-label">Avg. per Person</div><div class="stat-value" id="stat-avg">—</div><div class="stat-sub">referrals on average</div></div>
+      <div class="stat-card"><div class="stat-label">Data Source</div><div class="stat-value" style="font-size:1rem; margin-top:.4rem;" id="stat-source">—</div></div>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" id="error-banner">
+      <span>⚠️</span>
+      <span id="error-text">Could not load data from Google Sheets.</span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="search" placeholder="Search by name or phone…" oninput="renderTable()"/>
+      </div>
+      <button class="btn-outline-sm" onclick="document.getElementById('search').value=''; renderTable()">Clear</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-header">
+        <h2>All Referrals</h2>
+        <span class="count" id="row-count"></span>
+      </div>
+      <div class="table-wrap">
+        <!-- Loading -->
+        <div class="loading-state" id="loading-state">
+          <div class="loader"></div>
+          <p>Fetching data from Google Sheets…</p>
+        </div>
+        <!-- Table -->
+        <table id="data-table" class="hidden">
+          <thead><tr><th>#</th><th>Referred By</th><th>Referral Name</th><th>Phone Number</th><th>Submitted At</th></tr></thead>
+          <tbody id="admin-tbody"></tbody>
+        </table>
+        <!-- Empty -->
+        <div class="empty-state hidden" id="empty-state">
+          <div class="icon">📭</div>
+          <p>No submissions yet. Share the referral link with your participants!</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="config.js"></script>
+<script>
+  const ADMIN_PASSWORD = (typeof ADMIN_PASS !== 'undefined' && ADMIN_PASS) ? ADMIN_PASS : 'lecture2024';
+  let allRows = [];
+
+  // ── AUTH ──────────────────────────────────────────────────
+  function login() {
+    const pwd = document.getElementById('pwd').value;
+    if (pwd === ADMIN_PASSWORD) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-screen').style.display = 'block';
+      loadData();
+    } else {
+      document.getElementById('login-err').style.display = 'block';
+      document.getElementById('pwd').value = '';
+    }
+  }
+
+  function logout() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('admin-screen').style.display = 'none';
+    document.getElementById('pwd').value = '';
+    allRows = [];
+  }
+
+  // ── DATA LOADING ──────────────────────────────────────────
+  async function loadData() {
+    showLoading(true);
+    hideError();
+
+    const hasSheets = typeof GOOGLE_SCRIPT_URL !== 'undefined' && GOOGLE_SCRIPT_URL;
+
+    if (hasSheets) {
+      await loadFromSheets();
+    } else {
+      // Fallback to localStorage if Sheets not configured yet
+      loadFromLocal();
+    }
+  }
+
+  async function loadFromSheets() {
+    try {
+      const res = await fetch(GOOGLE_SCRIPT_URL, { method: 'GET' });
+      const json = await res.json();
+
+      if (json.status !== 'ok') throw new Error(json.message || 'Unknown error');
+
+      allRows = json.rows || [];
+      updateStats('sheets');
+      renderTable();
+      showLoading(false);
+
+      const now = new Date().toLocaleTimeString('en-NG', { timeZone: 'Africa/Lagos' });
+      document.getElementById('header-sub').textContent = `Live from Google Sheets · Last refreshed: ${now}`;
+
+    } catch(err) {
+      showError(`Could not reach Google Sheets: ${err.message}. Showing locally stored data as fallback.`);
+      loadFromLocal();
+    }
+  }
+
+  function loadFromLocal() {
+    const stored = JSON.parse(localStorage.getItem('lectureReferrals') || '[]');
+    allRows = [];
+    stored.forEach(entry => {
+      (entry.referrals || []).forEach(ref => {
+        allRows.push({ timestamp: entry.timestamp || '', participant: entry.participant || '', refName: ref.name || '', refPhone: ref.phone || '' });
+      });
+    });
+    updateStats('local');
+    renderTable();
+    showLoading(false);
+    document.getElementById('header-sub').textContent = `Showing locally stored data (Google Sheets not configured yet)`;
+  }
+
+  // ── STATS ─────────────────────────────────────────────────
+  function updateStats(source) {
+    const participants = [...new Set(allRows.map(r => r.participant))].length;
+    const total = allRows.length;
+    const avg = participants ? (total / participants).toFixed(1) : 0;
+
+    document.getElementById('stat-participants').textContent = participants;
+    document.getElementById('stat-referrals').textContent = total;
+    document.getElementById('stat-avg').textContent = avg;
+
+    const srcEl = document.getElementById('stat-source');
+    if (source === 'sheets') {
+      srcEl.innerHTML = `<span class="source-badge">✓ Google Sheets</span>`;
+    } else {
+      srcEl.innerHTML = `<span class="source-badge warn">⚠ Local only</span>`;
+    }
+  }
+
+  // ── TABLE ─────────────────────────────────────────────────
+  function renderTable() {
+    const query = document.getElementById('search').value.toLowerCase().trim();
+    let rows = allRows;
+
+    if (query) {
+      rows = rows.filter(r =>
+        r.participant.toLowerCase().includes(query) ||
+        r.refName.toLowerCase().includes(query) ||
+        r.refPhone.includes(query)
+      );
+    }
+
+    const tbody = document.getElementById('admin-tbody');
+    const table = document.getElementById('data-table');
+    const empty = document.getElementById('empty-state');
+
+    document.getElementById('row-count').textContent = `${rows.length} row${rows.length !== 1 ? 's' : ''}`;
+
+    if (rows.length === 0) {
+      table.classList.add('hidden'); empty.classList.remove('hidden');
+      tbody.innerHTML = ''; return;
+    }
+
+    table.classList.remove('hidden'); empty.classList.add('hidden');
+    tbody.innerHTML = rows.map((r, i) => `
+      <tr>
+        <td><span class="tag">${i + 1}</span></td>
+        <td class="referrer-name">${esc(r.participant)}</td>
+        <td>${esc(r.refName)}</td>
+        <td>${esc(r.refPhone)}</td>
+        <td class="timestamp">${esc(r.timestamp)}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ── EXPORT ────────────────────────────────────────────────
+  function exportCSV() {
+    if (!allRows.length) { alert('No data to export yet.'); return; }
+    const header = ['#', 'Referred By', 'Referral Name', 'Phone Number', 'Submitted At'];
+    const lines = [
+      header.join(','),
+      ...allRows.map((r, i) => [i+1, `"${r.participant}"`, `"${r.refName}"`, `"${r.refPhone}"`, `"${r.timestamp}"`].join(','))
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'lecture-referrals.csv';
+    a.click();
+  }
+
+  // ── UI HELPERS ────────────────────────────────────────────
+  function showLoading(show) {
+    document.getElementById('loading-state').style.display = show ? 'block' : 'none';
+    if (show) {
+      document.getElementById('data-table').classList.add('hidden');
+      document.getElementById('empty-state').classList.add('hidden');
+    }
+  }
+
+  function showError(msg) {
+    const banner = document.getElementById('error-banner');
+    document.getElementById('error-text').textContent = msg;
+    banner.classList.add('show');
+  }
+
+  function hideError() {
+    document.getElementById('error-banner').classList.remove('show');
+  }
+
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

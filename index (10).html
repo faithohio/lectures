@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lecture Referral Form</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0f0e0c;
+      --cream: #faf7f2;
+      --gold: #c9933a;
+      --gold-light: #f0d9a8;
+      --muted: #7a7469;
+      --card: #ffffff;
+      --border: #e8e2d9;
+      --success: #2d6a4f;
+      --danger: #b5433a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--cream); font-family: 'DM Sans', sans-serif; color: var(--ink); min-height: 100vh; }
+
+    header {
+      background: var(--ink); color: var(--cream);
+      padding: 2.4rem 2rem 2rem; text-align: center; position: relative; overflow: hidden;
+    }
+    header::before {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(-45deg, transparent, transparent 18px, rgba(201,147,58,.07) 18px, rgba(201,147,58,.07) 19px);
+    }
+    .badge {
+      display: inline-block; background: var(--gold); color: var(--ink);
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+      padding: .3rem .9rem; border-radius: 2px; margin-bottom: 1rem; position: relative;
+    }
+    header h1 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 900; line-height: 1.15; position: relative; }
+    header p { font-size: .95rem; color: #c9c4bb; margin-top: .6rem; font-weight: 300; position: relative; }
+
+    main { max-width: 660px; margin: 0 auto; padding: 2.4rem 1.2rem 4rem; }
+
+    .steps { display: flex; align-items: center; margin-bottom: 2rem; }
+    .step { display: flex; align-items: center; gap: .5rem; font-size: .82rem; font-weight: 500; color: var(--muted); }
+    .step.active { color: var(--ink); }
+    .step.done { color: var(--success); }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; flex-shrink: 0; transition: all .3s;
+    }
+    .step.active .step-num { background: var(--gold); border-color: var(--gold); color: var(--ink); }
+    .step.done .step-num { background: var(--success); border-color: var(--success); color: #fff; }
+    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 .5rem; }
+    .step-line.done { background: var(--success); }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 2rem; box-shadow: 0 2px 16px rgba(0,0,0,.05);
+    }
+    .card h2 { font-family: 'Playfair Display', serif; font-size: 1.35rem; margin-bottom: .35rem; }
+    .card .subtitle { font-size: .88rem; color: var(--muted); margin-bottom: 1.8rem; }
+
+    label { display: block; font-size: .8rem; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+    input[type="text"], input[type="tel"] {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink); background: var(--cream);
+      transition: border-color .2s, box-shadow .2s; outline: none;
+    }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,147,58,.15); background: #fff; }
+    .field { margin-bottom: 1.2rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem; padding: .8rem 1.6rem;
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: .95rem; font-weight: 500;
+      cursor: pointer; border: none; transition: all .2s;
+    }
+    .btn-primary { background: var(--ink); color: var(--cream); width: 100%; justify-content: center; }
+    .btn-primary:hover { background: #2a2720; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    .btn-gold { background: var(--gold); color: var(--ink); font-weight: 700; width: 100%; justify-content: center; font-size: 1rem; }
+    .btn-gold:hover { background: #b8822e; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(201,147,58,.35); }
+    .btn-outline { background: transparent; border: 1.5px dashed var(--gold); color: var(--gold); width: 100%; justify-content: center; margin-top: .6rem; }
+    .btn-outline:hover { background: rgba(201,147,58,.08); }
+
+    .referral-list { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 1.2rem; }
+    .referral-row {
+      background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: .9rem;
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+    .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
+    .row-num { font-size: .75rem; font-weight: 700; color: var(--gold); letter-spacing: .08em; text-transform: uppercase; }
+    .btn-remove {
+      background: none; border: 1.5px solid var(--border); border-radius: 6px;
+      width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--muted); font-size: .85rem; transition: all .2s;
+    }
+    .btn-remove:hover { border-color: var(--danger); color: var(--danger); background: rgba(181,67,58,.08); }
+    .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+    .row-fields .field { margin-bottom: 0; }
+
+    #success-screen { display: none; animation: fadeIn .5s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .checkmark-circle {
+      width: 72px; height: 72px; background: var(--success); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; margin: 0 auto 1.4rem; font-size: 2rem;
+    }
+    #success-screen .card { text-align: center; }
+    #success-screen h2 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: .5rem; }
+    #success-screen > .card > p { color: var(--muted); font-size: .95rem; margin-bottom: 1.6rem; }
+
+    .summary-wrap { text-align: left; margin-top: 1.4rem; }
+    .summary-wrap h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; margin-bottom: .8rem; }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    thead tr { background: var(--ink); color: var(--cream); }
+    thead th { padding: .6rem 1rem; text-align: left; font-weight: 500; letter-spacing: .04em; }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:nth-child(even) { background: var(--cream); }
+    tbody td { padding: .6rem 1rem; }
+    .tag { display: inline-block; background: var(--gold-light); color: #7a5c1e; font-size: .75rem; font-weight: 600; padding: .18rem .6rem; border-radius: 20px; }
+
+    .divider { height: 1px; background: var(--border); margin: 1.6rem 0; }
+    .hidden { display: none !important; }
+    .err { font-size: .82rem; color: var(--danger); margin-top: .4rem; display: none; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 480px) { .row-fields { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">📋 Lecture Referral</div>
+  <h1>Refer a Friend<br/>to the Next Lecture</h1>
+  <p>Help us grow the community — invite people who'll benefit.</p>
+</header>
+
+<main>
+  <div class="steps">
+    <div class="step active" id="si1"><div class="step-num">1</div> Your Name</div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step" id="si2"><div class="step-num">2</div> Add Referrals</div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="si3"><div class="step-num">3</div> Done!</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div id="step1" class="card">
+    <h2>Welcome 👋</h2>
+    <p class="subtitle">Let's start with your name so we know who's referring.</p>
+    <div class="field">
+      <label for="participant-name">Your Full Name</label>
+      <input type="text" id="participant-name" placeholder="e.g. Amina Bello" autocomplete="off"/>
+      <div class="err" id="err-name">Please enter your name to continue.</div>
+    </div>
+    <button class="btn btn-primary" onclick="goToStep2()">Continue &rarr;</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="step2" class="card hidden">
+    <h2>Add Your Referrals</h2>
+    <p class="subtitle" id="step2-sub">Add the names and phone numbers of people you'd like to invite.</p>
+    <div class="referral-list" id="referral-list"></div>
+    <button class="btn btn-outline" onclick="addRow()">＋ Add Another Person</button>
+    <div class="divider"></div>
+    <div class="err" id="err-refs" style="display:block; visibility:hidden; margin-bottom:.8rem;"></div>
+    <button class="btn btn-gold" id="submit-btn" onclick="handleSubmit()">
+      <span id="submit-lbl">Submit Referrals</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div id="success-screen">
+    <div class="card">
+      <div class="checkmark-circle">✓</div>
+      <h2>Thank you, <span id="success-name"></span>!</h2>
+      <p>Your referrals have been recorded. We'll reach out to them before the next lecture.</p>
+      <div class="summary-wrap">
+        <h3>People You Referred</h3>
+        <table>
+          <thead><tr><th>#</th><th>Name</th><th>Phone Number</th></tr></thead>
+          <tbody id="summary-tbody"></tbody>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <button class="btn btn-outline" onclick="resetForm()" style="border-style:solid;">← Submit Another Response</button>
+    </div>
+  </div>
+</main>
+
+<script src="config.js"></script>
+<script>
+  let count = 0;
+
+  function setStep(n) {
+    document.getElementById('step1').classList.toggle('hidden', n !== 1);
+    document.getElementById('step2').classList.toggle('hidden', n !== 2);
+    document.getElementById('success-screen').style.display = n === 3 ? 'block' : 'none';
+    [1,2,3].forEach(i => {
+      const el = document.getElementById('si' + i);
+      el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+    });
+    [1,2].forEach(i => {
+      document.getElementById('sl' + i).className = 'step-line' + (i < n ? ' done' : '');
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToStep2() {
+    const name = document.getElementById('participant-name').value.trim();
+    if (!name) { document.getElementById('err-name').style.display = 'block'; return; }
+    document.getElementById('err-name').style.display = 'none';
+    document.getElementById('step2-sub').textContent = `Hi ${name}! Add the names and phone numbers of people you'd like to invite.`;
+    setStep(2);
+    if (count === 0) addRow();
+  }
+
+  function addRow() {
+    count++;
+    const div = document.createElement('div');
+    div.className = 'referral-row'; div.id = 'row-' + count;
+    div.innerHTML = `
+      <div class="row-header">
+        <span class="row-num">Person ${count}</span>
+        <button class="btn-remove" onclick="removeRow(${count})">✕</button>
+      </div>
+      <div class="row-fields">
+        <div class="field"><label>Full Name</label><input type="text" id="rn-${count}" placeholder="e.g. Chidi Okeke" autocomplete="off"/></div>
+        <div class="field"><label>Phone Number</label><input type="tel" id="rp-${count}" placeholder="e.g. 08012345678"/></div>
+      </div>`;
+    document.getElementById('referral-list').appendChild(div);
+    document.getElementById('rn-' + count).focus();
+  }
+
+  function removeRow(id) {
+    const el = document.getElementById('row-' + id);
+    if (el) el.remove();
+  }
+
+  function getReferrals() {
+    return [...document.querySelectorAll('.referral-row')].map(row => {
+      const id = row.id.replace('row-', '');
+      return { name: (document.getElementById('rn-' + id)?.value || '').trim(), phone: (document.getElementById('rp-' + id)?.value || '').trim() };
+    }).filter(r => r.name || r.phone);
+  }
+
+  async function handleSubmit() {
+    const participant = document.getElementById('participant-name').value.trim();
+    const refs = getReferrals();
+    const errEl = document.getElementById('err-refs');
+
+    if (refs.length === 0) { errEl.textContent = 'Please add at least one referral.'; errEl.style.visibility = 'visible'; return; }
+    if (refs.some(r => !r.name || !r.phone)) { errEl.textContent = 'Please fill in both name and phone for each person.'; errEl.style.visibility = 'visible'; return; }
+    errEl.style.visibility = 'hidden';
+
+    document.getElementById('submit-lbl').textContent = 'Submitting…';
+    document.getElementById('spinner').style.display = 'block';
+    document.getElementById('submit-btn').disabled = true;
+
+    const payload = { participant, timestamp: new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' }), referrals: refs };
+
+    // Save locally for admin panel
+    const all = JSON.parse(localStorage.getItem('lectureReferrals') || '[]');
+    all.push(payload); localStorage.setItem('lectureReferrals', JSON.stringify(all));
+
+    // Send to Google Sheets
+    if (typeof GOOGLE_SCRIPT_URL !== 'undefined' && GOOGLE_SCRIPT_URL) {
+      try { await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }); }
+      catch(e) { console.warn('Sheets sync failed:', e); }
+    }
+
+    showSuccess(participant, refs);
+  }
+
+  function showSuccess(name, refs) {
+    document.getElementById('success-name').textContent = name;
+    const tbody = document.getElementById('summary-tbody');
+    tbody.innerHTML = refs.map((r,i) => `<tr><td><span class="tag">${i+1}</span></td><td>${r.name}</td><td>${r.phone}</td></tr>`).join('');
+    setStep(3);
+  }
+
+  function resetForm() {
+    document.getElementById('participant-name').value = '';
+    document.getElementById('referral-list').innerHTML = '';
+    count = 0;
+    document.getElementById('submit-lbl').textContent = 'Submit Referrals';
+    document.getElementById('spinner').style.display = 'none';
+    document.getElementById('submit-btn').disabled = false;
+    setStep(1);
+  }
+</script>
+</body>
+</html>
