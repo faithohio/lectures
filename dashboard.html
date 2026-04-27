@@ -243,6 +243,36 @@
       .dash-main { padding: 1.8rem 1rem 4rem; }
       .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
     }
+
+    /* ── VIDEO MODAL ── */
+    .video-modal-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.88); backdrop-filter: blur(6px);
+      align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .video-modal-backdrop.open { display: flex; }
+    .video-modal {
+      width: 100%; max-width: 860px;
+      background: #111; border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 24px 80px rgba(0,0,0,.7);
+      animation: modalIn .22s ease;
+    }
+    @keyframes modalIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
+    .video-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.2rem; border-bottom: 1px solid var(--border);
+      background: #0d0d0d;
+    }
+    .video-modal-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.05rem; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 3rem); }
+    .video-modal-close {
+      background: none; border: none; color: var(--text-dim); font-size: 1.5rem;
+      cursor: pointer; line-height: 1; padding: .2rem .4rem; border-radius: 4px;
+      transition: color .2s; flex-shrink: 0;
+    }
+    .video-modal-close:hover { color: var(--red); }
+    .video-modal-player { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+    .video-modal-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
@@ -390,6 +420,21 @@
       </div>
     </div>
   </main>
+</div>
+
+<!-- ════════════════════════════════════
+     VIDEO MODAL
+════════════════════════════════════ -->
+<div class="video-modal-backdrop" id="video-modal" onclick="closeVideoModal(event)">
+  <div class="video-modal">
+    <div class="video-modal-header">
+      <div class="video-modal-title" id="video-modal-title">—</div>
+      <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
+    </div>
+    <div class="video-modal-player">
+      <iframe id="video-modal-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+    </div>
+  </div>
 </div>
 
 <script src="config.js"></script>
@@ -660,12 +705,16 @@ function renderReplays(replays) {
     var watchBtn = expired
       ? '<span class="watch-link dim">Expired</span>'
       : r.videoUrl
-        ? '<a class="watch-link" href="' + r.videoUrl + '" target="_blank" rel="noopener">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+        ? '<a class="watch-link" href="#" onclick="openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ');return false;">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
         : '<span class="watch-link dim">Coming soon</span>';
+
+    var thumbClick = !expired && r.videoUrl
+      ? 'openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ')'
+      : '';
 
     html +=
       '<div class="replay-card">'
-      + '<div class="replay-thumb" onclick="' + (!expired && r.videoUrl ? 'window.open(\'' + r.videoUrl + '\',\'_blank\')' : '') + '">'
+      + '<div class="replay-thumb" onclick="' + thumbClick + '">'
       + '<div class="thumb-text">' + esc(r.title).toUpperCase() + '</div>'
       + '<div class="thumb-overlay"></div>'
       + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
@@ -684,6 +733,35 @@ function renderReplays(replays) {
   html += '</div>';
   container.innerHTML = html;
 }
+
+// ── VIDEO MODAL ───────────────────────────────────────
+function getYouTubeEmbedUrl(url) {
+  // Handles: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/embed/ID
+  var match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return match ? 'https://www.youtube.com/embed/' + match[1] + '?autoplay=1&rel=0' : null;
+}
+
+function openVideoModal(url, title) {
+  var embedUrl = getYouTubeEmbedUrl(url);
+  if (!embedUrl) { window.open(url, '_blank'); return; } // fallback for non-YouTube
+  document.getElementById('video-modal-title').textContent = title || 'Lecture Replay';
+  document.getElementById('video-modal-iframe').src = embedUrl;
+  document.getElementById('video-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal(e) {
+  // Close only if clicking the backdrop itself, or the ✕ button (no event = button click)
+  if (e && e.target !== document.getElementById('video-modal')) return;
+  document.getElementById('video-modal-iframe').src = ''; // stops video
+  document.getElementById('video-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeVideoModal();
+});
 
 // ── SIGN OUT ──────────────────────────────────────────
 function signOut() {
