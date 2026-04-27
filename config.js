@@ -5,7 +5,7 @@
 
 // STEP 1: After setting up Google Apps Script, paste your Web App URL here.
 // Leave empty ("") until you've completed the Google Sheets setup guide.
-var GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzBOzy8H2N3ZUYse9HzpNMWDWf0e84A3M--w0Q9FzEM4nZYvFoS9tZSMrSsIgc46_Bw/exec";
+var GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6xvcjXJL9W6OSLVG5vLjMuJcMZ6NRgWEKF0L4Qz0pc5f6jwmDJJDDis0mwzcwkpPXOQ/exec";
 
 // STEP 2: Change this to your own admin password.
 // You'll use this to log into admin.html
