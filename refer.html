@@ -3,280 +3,369 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lecture Referral Form</title>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+  <title>Refer a Friend to FO Lectures</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
+    /* ── SAME VARIABLES AS DASHBOARD ── */
     :root {
-      --ink: #0d0d0d;
-      --red: #c0181a;
-      --red-dark: #96100f;
-      --red-light: #fdf0f0;
-      --gold: #c9933a;
-      --gold-light: #f0d9a8;
-      --muted: #6b6b6b;
-      --card: #ffffff;
-      --bg: #f5f5f5;
-      --border: #e2e2e2;
-      --success: #1e6840;
-      --danger: #c0181a;
+      --ink: #0d0d0d; --red: #c0181a; --red-dark: #96100f;
+      --red-glow: rgba(192,24,26,.18); --gold: #c9933a;
+      --gold-light: rgba(201,147,58,.12); --card: #161616;
+      --border: #2a2a2a; --bg: #0d0d0d; --text: #f0f0f0; --text-dim: #888;
+      --success: #1e6840; --success-glow: rgba(30,104,64,.15);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); font-family: 'Anybody', sans-serif; color: var(--ink); min-height: 100vh; }
+    body { background: var(--bg); font-family: 'Anybody', sans-serif; color: var(--text); min-height: 100vh; }
 
-    header {
-      background: var(--ink); color: #fff;
-      padding: 2.8rem 2rem 2.2rem; text-align: center; position: relative; overflow: hidden;
+    /* ── HEADER — same as dashboard site-header ── */
+    .site-header {
+      background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
     }
-    header::before {
-      content: ''; position: absolute; inset: 0;
-      background: repeating-linear-gradient(-45deg, transparent, transparent 18px, rgba(192,24,26,.08) 18px, rgba(192,24,26,.08) 19px);
-    }
-    header::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+    .site-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
       background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
     }
-    .badge {
-      display: inline-block; background: var(--red); color: #fff;
-      font-family: 'Anybody', sans-serif; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
-      padding: .32rem 1rem; border-radius: 2px; margin-bottom: 1.1rem; position: relative;
+    .logo { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.35rem; font-weight: 400; }
+    .logo em { color: var(--red); }
+    .btn-back {
+      background: none; border: 1px solid var(--border); color: var(--text-dim);
+      font-family: 'Anybody', sans-serif; font-size: .78rem; padding: .32rem .75rem;
+      border-radius: 6px; cursor: pointer; transition: all .2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: .35rem;
     }
-    header h1 {
-      font-family: 'Anton', sans-serif; font-style: italic;
-      font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 400; line-height: 1.1;
-      position: relative; letter-spacing: .02em;
+    .btn-back:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── HERO — same as dash-hero ── */
+    .page-hero {
+      background: #111; border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden;
     }
-    header p { font-size: .95rem; color: #b0b0b0; margin-top: .7rem; font-weight: 300; position: relative; }
+    .page-hero::before {
+      content: 'REFER'; position: absolute; top: 50%; right: -1rem;
+      transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: clamp(4rem, 14vw, 10rem); color: rgba(255,255,255,.02);
+      pointer-events: none; white-space: nowrap;
+    }
+    .hero-inner { max-width: 680px; margin: 0 auto; position: relative; }
+    .hero-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .5rem; }
+    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: .02em; margin-bottom: .4rem; }
+    .hero-name em { color: var(--red); font-style: italic; }
+    .hero-sub { font-size: .88rem; color: var(--text-dim); font-weight: 300; }
 
-    main { max-width: 660px; margin: 0 auto; padding: 2.4rem 1.2rem 4rem; }
-
-    .steps { display: flex; align-items: center; margin-bottom: 2rem; }
-    .step { display: flex; align-items: center; gap: .5rem; font-size: .82rem; font-weight: 500; color: var(--muted); }
-    .step.active { color: var(--ink); }
-    .step.done { color: var(--success); }
+    /* ── STEPS ── */
+    .steps-wrap { max-width: 680px; margin: 2rem auto 0; padding: 0 1.5rem; }
+    .steps { display: flex; align-items: center; }
+    .step { display: flex; align-items: center; gap: .5rem; font-size: .78rem; font-weight: 600; color: var(--text-dim); letter-spacing: .04em; white-space: nowrap; }
+    .step.active { color: var(--text); }
+    .step.done { color: #6ee7a0; }
     .step-num {
-      width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border);
-      display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 700; flex-shrink: 0; transition: all .3s;
+      width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 700; flex-shrink: 0; transition: all .3s;
     }
     .step.active .step-num { background: var(--red); border-color: var(--red); color: #fff; }
     .step.done .step-num { background: var(--success); border-color: var(--success); color: #fff; }
-    .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 .5rem; }
+    .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 .6rem; transition: background .3s; }
     .step-line.done { background: var(--success); }
 
-    .card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 2rem; box-shadow: 0 2px 16px rgba(0,0,0,.06);
+    /* ── MAIN CONTENT ── */
+    .page-main { max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+    /* ── CARDS — same as dashboard ── */
+    .auth-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.8rem;
+      box-shadow: 0 0 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.03);
     }
-    .card h2 {
+    .card-title {
       font-family: 'Anton', sans-serif; font-style: italic;
-      font-size: 1.55rem; font-weight: 400; margin-bottom: .35rem; letter-spacing: .02em;
+      font-size: 1.4rem; font-weight: 400; margin-bottom: .3rem; letter-spacing: .02em;
     }
-    .card .subtitle { font-size: .9rem; color: var(--muted); margin-bottom: 1.8rem; }
+    .card-sub { font-size: .88rem; color: var(--text-dim); margin-bottom: 1.6rem; font-weight: 300; line-height: 1.5; }
 
-    label { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
-    input[type="text"], input[type="tel"] {
-      width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem;
-      font-family: 'Anybody', sans-serif; font-size: 1rem; color: var(--ink); background: #fafafa;
-      transition: border-color .2s, box-shadow .2s; outline: none;
+    /* ── FORM FIELDS — same as dashboard ── */
+    label {
+      display: block; font-size: .74rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text-dim); margin-bottom: .4rem;
     }
-    input:focus { border-color: var(--red); box-shadow: 0 0 0 3px rgba(192,24,26,.12); background: #fff; }
-    .field { margin-bottom: 1.2rem; }
+    .field { margin-bottom: 1rem; }
+    .auth-card input[type="text"],
+    .auth-card input[type="tel"] {
+      width: 100%; background: #111; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: .82rem 1rem;
+      font-family: 'Anybody', sans-serif; font-size: .97rem;
+      color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .auth-card input::placeholder { color: #3a3a3a; }
+    .auth-card input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
 
+    /* ── BUTTONS — same as dashboard ── */
     .btn {
-      display: inline-flex; align-items: center; gap: .5rem; padding: .85rem 1.6rem;
-      border-radius: 8px; font-family: 'Anybody', sans-serif; font-size: .95rem; font-weight: 700;
-      cursor: pointer; border: none; transition: all .2s; letter-spacing: .02em;
+      width: 100%; border: none; border-radius: 8px; padding: .88rem;
+      font-family: 'Anybody', sans-serif; font-size: .97rem; font-weight: 700;
+      cursor: pointer; transition: all .2s; letter-spacing: .03em;
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
     }
-    .btn-primary { background: var(--ink); color: #fff; width: 100%; justify-content: center; }
-    .btn-primary:hover { background: #2a2a2a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.18); }
-    .btn-red { background: var(--red); color: #fff; width: 100%; justify-content: center; font-size: 1rem; }
-    .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(192,24,26,.35); }
-    .btn-outline { background: transparent; border: 1.5px dashed var(--gold); color: var(--gold); width: 100%; justify-content: center; margin-top: .6rem; }
-    .btn-outline:hover { background: rgba(201,147,58,.08); border-style: solid; }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(192,24,26,.35); }
+    .btn-red:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+      font-size: .88rem; margin-top: .7rem;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-outline-gold {
+      background: transparent; border: 1px dashed var(--gold); color: var(--gold);
+      font-size: .88rem; margin-top: .6rem;
+    }
+    .btn-outline-gold:hover { background: var(--gold-light); border-style: solid; }
 
-    .referral-list { display: flex; flex-direction: column; gap: .9rem; margin-bottom: 1.2rem; }
+    /* ── REFERRAL ROWS ── */
+    .referral-list { display: flex; flex-direction: column; gap: .8rem; margin-bottom: 1.2rem; }
     .referral-row {
-      background: #fafafa; border: 1px solid var(--border); border-radius: 8px; padding: .9rem;
-      animation: slideIn .25s ease;
+      background: #111; border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem;
+      animation: cardIn .2s ease both;
     }
-    @keyframes slideIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
-    .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
-    .row-num { font-size: .72rem; font-weight: 700; color: var(--red); letter-spacing: .1em; text-transform: uppercase; font-family: 'Anybody', sans-serif; }
+    @keyframes cardIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+    .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .8rem; }
+    .row-num { font-size: .7rem; font-weight: 700; color: var(--red); letter-spacing: .1em; text-transform: uppercase; }
     .btn-remove {
-      background: none; border: 1.5px solid var(--border); border-radius: 6px;
-      width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: var(--muted); font-size: .85rem; transition: all .2s;
+      background: none; border: 1px solid var(--border); border-radius: 6px;
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: var(--text-dim); font-size: .8rem; transition: all .2s;
     }
-    .btn-remove:hover { border-color: var(--danger); color: var(--danger); background: rgba(192,24,26,.08); }
+    .btn-remove:hover { border-color: var(--red); color: var(--red); background: rgba(192,24,26,.08); }
     .row-fields { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
     .row-fields .field { margin-bottom: 0; }
 
-    #success-screen { display: none; animation: fadeIn .5s ease; }
-    @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
-    .checkmark-circle {
-      width: 72px; height: 72px; background: var(--success); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; margin: 0 auto 1.4rem; font-size: 2rem;
+    .divider { height: 1px; background: var(--border); margin: 1.4rem 0; }
+
+    /* ── MESSAGES ── */
+    .err-msg {
+      background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25);
+      color: #f87171; font-size: .82rem; padding: .6rem .9rem;
+      border-radius: 6px; margin-bottom: 1rem; display: none; text-align: left;
     }
-    #success-screen .card { text-align: center; }
-    #success-screen h2 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.8rem; font-weight: 400; margin-bottom: .5rem; }
-    #success-screen > .card > p { color: var(--muted); font-size: .95rem; margin-bottom: 1.6rem; }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: none; width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.25); border-top-color: #fff;
+      border-radius: 50%; animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── SUCCESS ── */
+    #success-screen { display: none; animation: cardIn .35s ease; }
+    .success-icon {
+      width: 68px; height: 68px; background: var(--success);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.4rem; font-size: 1.8rem;
+      box-shadow: 0 0 0 8px var(--success-glow);
+    }
+    .success-card { text-align: center; }
+    .success-card .card-title { font-size: 1.8rem; margin-bottom: .5rem; }
+    .success-card .card-sub { margin-bottom: 1.6rem; }
 
     .summary-wrap { text-align: left; margin-top: 1.4rem; }
-    .summary-wrap h3 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.1rem; font-weight: 400; margin-bottom: .8rem; }
-    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
-    thead tr { background: var(--ink); color: #fff; }
-    thead th { padding: .6rem 1rem; text-align: left; font-weight: 500; letter-spacing: .04em; font-family: 'Anybody', sans-serif; }
+    .summary-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1rem; font-weight: 400; margin-bottom: .8rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: .06em; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    thead tr { background: #111; border-bottom: 2px solid var(--red); }
+    thead th { padding: .6rem 1rem; text-align: left; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: .72rem; color: var(--text-dim); }
     tbody tr { border-bottom: 1px solid var(--border); }
-    tbody tr:nth-child(even) { background: #fafafa; }
-    tbody td { padding: .6rem 1rem; }
-    .tag { display: inline-block; background: var(--gold-light); color: #7a5c1e; font-size: .75rem; font-weight: 700; padding: .18rem .6rem; border-radius: 20px; }
+    tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
+    tbody td { padding: .65rem 1rem; }
+    .tag { display: inline-block; background: var(--gold-light); color: var(--gold); font-size: .72rem; font-weight: 700; padding: .18rem .55rem; border-radius: 3px; }
 
-    .divider { height: 1px; background: var(--border); margin: 1.6rem 0; }
     .hidden { display: none !important; }
-    .err { font-size: .82rem; color: var(--danger); margin-top: .4rem; display: none; }
-    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @media (max-width: 480px) { .row-fields { grid-template-columns: 1fr; } }
+
+    @media (max-width: 540px) {
+      .site-header { padding: .9rem 1rem; }
+      .page-hero { padding: 2rem 1.2rem 1.5rem; }
+      .page-main { padding: 1.5rem 1rem 4rem; }
+      .row-fields { grid-template-columns: 1fr; }
+      .steps-wrap { padding: 0 1rem; }
+      .step span:not(.step-num) { display: none; }
+    }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="badge">📋 Lecture Referral</div>
-  <h1>Refer a Friend<br/>to the Next Lecture</h1>
-  <p>Help us grow the community — invite people who'll benefit.</p>
+<!-- ── HEADER ── -->
+<header class="site-header">
+  <div class="logo">FO<em>Lectures</em></div>
+  <a class="btn-back" href="index.html">← Back to Dashboard</a>
 </header>
 
-<main>
-  <div class="steps">
-    <div class="step active" id="si1"><div class="step-num">1</div> Your Name</div>
-    <div class="step-line" id="sl1"></div>
-    <div class="step" id="si2"><div class="step-num">2</div> Add Referrals</div>
-    <div class="step-line" id="sl2"></div>
-    <div class="step" id="si3"><div class="step-num">3</div> Done!</div>
+<!-- ── HERO ── -->
+<div class="page-hero">
+  <div class="hero-inner">
+    <div class="hero-label">Community</div>
+    <div class="hero-name">Refer a <em>Friend</em></div>
+    <div class="hero-sub">Help grow the community — invite people who'll benefit from the next lecture.</div>
   </div>
+</div>
+
+<!-- ── STEPS ── -->
+<div class="steps-wrap">
+  <div class="steps">
+    <div class="step active" id="si1"><div class="step-num">1</div> <span>Your Name</span></div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step" id="si2"><div class="step-num">2</div> <span>Add Referrals</span></div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="si3"><div class="step-num">3</div> <span>Done!</span></div>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main class="page-main">
 
   <!-- STEP 1 -->
-  <div id="step1" class="card">
-    <h2>Welcome 👋</h2>
-    <p class="subtitle">Let's start with your name so we know who's referring.</p>
+  <div id="step1" class="auth-card">
+    <div class="card-title">Welcome 👋</div>
+    <div class="card-sub">Let's start with your name so we know who's referring.</div>
     <div class="field">
       <label for="participant-name">Your Full Name</label>
-      <input type="text" id="participant-name" placeholder="e.g. Amina Bello" autocomplete="off"/>
-      <div class="err" id="err-name">Please enter your name to continue.</div>
+      <input type="text" id="participant-name" placeholder="e.g. Amina Bello" autocomplete="off"
+        onkeydown="if(event.key==='Enter') goToStep2()"/>
     </div>
-    <button class="btn btn-primary" onclick="goToStep2()">Continue &rarr;</button>
+    <div class="err-msg" id="err-name">Please enter your name to continue.</div>
+    <button class="btn btn-red" onclick="goToStep2()">Continue →</button>
   </div>
 
   <!-- STEP 2 -->
-  <div id="step2" class="card hidden">
-    <h2>Add Your Referrals</h2>
-    <p class="subtitle" id="step2-sub">Add the names and phone numbers of people you'd like to invite.</p>
+  <div id="step2" class="auth-card hidden">
+    <div class="card-title">Add Your Referrals</div>
+    <div class="card-sub" id="step2-sub">Add the names and phone numbers of people you'd like to invite.</div>
+
     <div class="referral-list" id="referral-list"></div>
-    <button class="btn btn-outline" onclick="addRow()">＋ Add Another Person</button>
+
+    <button class="btn btn-outline-gold" onclick="addRow()">＋ Add Another Person</button>
     <div class="divider"></div>
-    <div class="err" id="err-refs" style="display:block; visibility:hidden; margin-bottom:.8rem;"></div>
+    <div class="err-msg" id="err-refs"></div>
     <button class="btn btn-red" id="submit-btn" onclick="handleSubmit()">
       <span id="submit-lbl">Submit Referrals</span>
       <div class="spinner" id="spinner"></div>
     </button>
+    <button class="btn btn-ghost" onclick="setStep(1)">← Go Back</button>
   </div>
 
   <!-- SUCCESS -->
   <div id="success-screen">
-    <div class="card">
-      <div class="checkmark-circle">✓</div>
-      <h2>Thank you, <span id="success-name"></span>!</h2>
-      <p>Your referrals have been recorded. We'll reach out to them before the next lecture.</p>
+    <div class="auth-card success-card">
+      <div class="success-icon">✓</div>
+      <div class="card-title">Thank you, <span id="success-name"></span>!</div>
+      <div class="card-sub">Your referrals have been recorded. We'll reach out to them before the next lecture.</div>
+
       <div class="summary-wrap">
-        <h3>People You Referred</h3>
+        <div class="summary-title">People You Referred</div>
         <table>
-          <thead><tr><th>#</th><th>Name</th><th>Phone Number</th></tr></thead>
+          <thead><tr><th>#</th><th>Name</th><th>Phone</th></tr></thead>
           <tbody id="summary-tbody"></tbody>
         </table>
       </div>
+
       <div class="divider"></div>
-      <button class="btn btn-outline" onclick="resetForm()" style="border-style:solid;">← Submit Another Response</button>
+      <button class="btn btn-ghost" onclick="resetForm()">← Submit Another Response</button>
     </div>
   </div>
+
 </main>
 
 <script src="config.js"></script>
 <script>
-  let count = 0;
+  var count = 0;
 
   function setStep(n) {
     document.getElementById('step1').classList.toggle('hidden', n !== 1);
     document.getElementById('step2').classList.toggle('hidden', n !== 2);
     document.getElementById('success-screen').style.display = n === 3 ? 'block' : 'none';
-    [1,2,3].forEach(i => {
-      const el = document.getElementById('si' + i);
+    [1,2,3].forEach(function(i) {
+      var el = document.getElementById('si' + i);
       el.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
     });
-    [1,2].forEach(i => {
+    [1,2].forEach(function(i) {
       document.getElementById('sl' + i).className = 'step-line' + (i < n ? ' done' : '');
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function goToStep2() {
-    const name = document.getElementById('participant-name').value.trim();
-    if (!name) { document.getElementById('err-name').style.display = 'block'; return; }
-    document.getElementById('err-name').style.display = 'none';
-    document.getElementById('step2-sub').textContent = `Hi ${name}! Add the names and phone numbers of people you'd like to invite.`;
+    var name  = document.getElementById('participant-name').value.trim();
+    var errEl = document.getElementById('err-name');
+    if (!name) { errEl.style.display = 'block'; return; }
+    errEl.style.display = 'none';
+    document.getElementById('step2-sub').textContent = 'Hi ' + name + '! Add the names and phone numbers of people you\'d like to invite.';
     setStep(2);
     if (count === 0) addRow();
   }
 
   function addRow() {
     count++;
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.className = 'referral-row'; div.id = 'row-' + count;
-    div.innerHTML = `
-      <div class="row-header">
-        <span class="row-num">Person ${count}</span>
-        <button class="btn-remove" onclick="removeRow(${count})">✕</button>
-      </div>
-      <div class="row-fields">
-        <div class="field"><label>Full Name</label><input type="text" id="rn-${count}" placeholder="e.g. Chidi Okeke" autocomplete="off"/></div>
-        <div class="field"><label>Phone Number</label><input type="tel" id="rp-${count}" placeholder="e.g. 08012345678"/></div>
-      </div>`;
+    div.innerHTML =
+      '<div class="row-header">'
+      + '<span class="row-num">Person ' + count + '</span>'
+      + '<button class="btn-remove" onclick="removeRow(' + count + ')">✕</button>'
+      + '</div>'
+      + '<div class="row-fields">'
+      + '<div class="field"><label>Full Name</label><input type="text" id="rn-' + count + '" placeholder="e.g. Chidi Okeke" autocomplete="off"/></div>'
+      + '<div class="field"><label>Phone Number</label><input type="tel" id="rp-' + count + '" placeholder="e.g. 08012345678"/></div>'
+      + '</div>';
     document.getElementById('referral-list').appendChild(div);
     document.getElementById('rn-' + count).focus();
   }
 
   function removeRow(id) {
-    const el = document.getElementById('row-' + id);
+    var el = document.getElementById('row-' + id);
     if (el) el.remove();
   }
 
   function getReferrals() {
-    return [...document.querySelectorAll('.referral-row')].map(row => {
-      const id = row.id.replace('row-', '');
-      return { name: (document.getElementById('rn-' + id)?.value || '').trim(), phone: (document.getElementById('rp-' + id)?.value || '').trim() };
-    }).filter(r => r.name || r.phone);
+    return Array.from(document.querySelectorAll('.referral-row')).map(function(row) {
+      var id = row.id.replace('row-', '');
+      return {
+        name:  (document.getElementById('rn-' + id) ? document.getElementById('rn-' + id).value : '').trim(),
+        phone: (document.getElementById('rp-' + id) ? document.getElementById('rp-' + id).value : '').trim()
+      };
+    }).filter(function(r) { return r.name || r.phone; });
   }
 
   async function handleSubmit() {
-    const participant = document.getElementById('participant-name').value.trim();
-    const refs = getReferrals();
-    const errEl = document.getElementById('err-refs');
+    var participant = document.getElementById('participant-name').value.trim();
+    var refs  = getReferrals();
+    var errEl = document.getElementById('err-refs');
 
-    if (refs.length === 0) { errEl.textContent = 'Please add at least one referral.'; errEl.style.visibility = 'visible'; return; }
-    if (refs.some(r => !r.name || !r.phone)) { errEl.textContent = 'Please fill in both name and phone for each person.'; errEl.style.visibility = 'visible'; return; }
-    errEl.style.visibility = 'hidden';
+    errEl.style.display = 'none';
+    if (!refs.length) { errEl.textContent = 'Please add at least one referral.'; errEl.style.display = 'block'; return; }
+    if (refs.some(function(r) { return !r.name || !r.phone; })) {
+      errEl.textContent = 'Please fill in both name and phone for each person.';
+      errEl.style.display = 'block'; return;
+    }
 
     document.getElementById('submit-lbl').textContent = 'Submitting…';
     document.getElementById('spinner').style.display = 'block';
     document.getElementById('submit-btn').disabled = true;
 
-    const payload = { participant, timestamp: new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' }), referrals: refs };
-
-    const all = JSON.parse(localStorage.getItem('lectureReferrals') || '[]');
-    all.push(payload); localStorage.setItem('lectureReferrals', JSON.stringify(all));
+    var payload = {
+      participant: participant,
+      timestamp: new Date().toLocaleString('en-NG', { timeZone: 'Africa/Lagos' }),
+      referrals: refs
+    };
 
     if (typeof GOOGLE_SCRIPT_URL !== 'undefined' && GOOGLE_SCRIPT_URL) {
-      try { await fetch(GOOGLE_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) }); }
-      catch(e) { console.warn('Sheets sync failed:', e); }
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST', mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch(e) { console.warn('Sheets sync failed:', e); }
     }
 
     showSuccess(participant, refs);
@@ -284,8 +373,10 @@
 
   function showSuccess(name, refs) {
     document.getElementById('success-name').textContent = name;
-    const tbody = document.getElementById('summary-tbody');
-    tbody.innerHTML = refs.map((r,i) => `<tr><td><span class="tag">${i+1}</span></td><td>${r.name}</td><td>${r.phone}</td></tr>`).join('');
+    var tbody = document.getElementById('summary-tbody');
+    tbody.innerHTML = refs.map(function(r, i) {
+      return '<tr><td><span class="tag">' + (i+1) + '</span></td><td>' + esc(r.name) + '</td><td>' + esc(r.phone) + '</td></tr>';
+    }).join('');
     setStep(3);
   }
 
@@ -297,6 +388,10 @@
     document.getElementById('spinner').style.display = 'none';
     document.getElementById('submit-btn').disabled = false;
     setStep(1);
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 </script>
 </body>
