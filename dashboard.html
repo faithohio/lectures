@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FO Lectures</title>
+  <title>My Dashboard — FO Lectures</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -244,6 +244,28 @@
       .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
     }
 
+    /* ── REDEEM PANEL ── */
+    .btn-redeem-toggle {
+      background: transparent; border: 1px solid var(--red); color: var(--red);
+      font-family: 'Anybody', sans-serif; font-size: .78rem; font-weight: 700;
+      letter-spacing: .04em; padding: .35rem .9rem; border-radius: 6px;
+      cursor: pointer; white-space: nowrap; transition: all .2s; flex-shrink: 0;
+    }
+    .btn-redeem-toggle:hover, .btn-redeem-toggle.open { background: var(--red); color: #fff; }
+
+    .redeem-panel {
+      display: none; background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.3rem 1.5rem; margin-bottom: 1.6rem;
+      animation: cardIn .2s ease;
+    }
+    .redeem-panel.open { display: block; }
+    .redeem-hint { font-size: .85rem; color: var(--text-dim); margin-bottom: 1rem; font-weight: 300; }
+    .redeem-row { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; }
+    .redeem-input { flex: 1; min-width: 180px; background: #111; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem; font-family: 'Anybody', sans-serif; font-size: .97rem; color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; }
+    .redeem-input::placeholder { color: #3a3a3a; }
+    .redeem-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
+    .redeem-btn { width: auto; padding: .75rem 1.4rem; }
+
     /* ── VIDEO MODAL ── */
     .video-modal-backdrop {
       display: none; position: fixed; inset: 0; z-index: 1000;
@@ -413,7 +435,23 @@
     <div class="section-head" style="margin-top:2.5rem;">
       <h2>My <em>Replays</em></h2>
       <div class="section-line"></div>
+      <button class="btn-redeem-toggle" id="redeem-toggle-btn" onclick="toggleRedeemPanel()">＋ Redeem Code</button>
     </div>
+
+    <!-- Redeem panel -->
+    <div class="redeem-panel" id="redeem-panel">
+      <div class="redeem-inner">
+        <p class="redeem-hint">Bought a new lecture? Enter your access code below to unlock it.</p>
+        <div class="redeem-row">
+          <input type="text" id="redeem-code-input" class="code-input redeem-input" placeholder="e.g. APR2025-A1B2" autocomplete="off"
+            onkeydown="if(event.key==='Enter') submitRedeem()"/>
+          <button class="btn btn-red redeem-btn" id="redeem-btn" onclick="submitRedeem()">Unlock →</button>
+        </div>
+        <div class="err-msg" id="redeem-err"></div>
+        <div class="info-msg" id="redeem-info"></div>
+      </div>
+    </div>
+
     <div id="replays-container">
       <div style="text-align:center;padding:3rem;color:var(--text-dim);">
         <span class="spinner" style="border-top-color:var(--red);border-color:var(--border);"></span>
@@ -735,6 +773,96 @@ function renderReplays(replays) {
 
   html += '</div>';
   container.innerHTML = html;
+}
+
+// ── REDEEM CODE ───────────────────────────────────────
+function toggleRedeemPanel() {
+  var panel = document.getElementById('redeem-panel');
+  var btn   = document.getElementById('redeem-toggle-btn');
+  var isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('open', isOpen);
+  if (isOpen) document.getElementById('redeem-code-input').focus();
+  // reset messages
+  document.getElementById('redeem-err').style.display  = 'none';
+  document.getElementById('redeem-info').style.display = 'none';
+}
+
+async function submitRedeem() {
+  var code   = document.getElementById('redeem-code-input').value.trim().toUpperCase();
+  var errEl  = document.getElementById('redeem-err');
+  var infoEl = document.getElementById('redeem-info');
+  var btn    = document.getElementById('redeem-btn');
+
+  errEl.style.display = 'none';
+  infoEl.style.display = 'none';
+
+  if (!code) { errEl.textContent = 'Please enter your access code.'; errEl.style.display = 'block'; return; }
+
+  var saved = sessionStorage.getItem(SESSION_KEY);
+  if (!saved) { errEl.textContent = 'Session expired. Please sign in again.'; errEl.style.display = 'block'; return; }
+  var member = JSON.parse(saved);
+
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Unlocking…';
+
+  try {
+    var url = SCRIPT + '?action=register&name=' + enc(member.name) + '&email=' + enc(member.email) + '&phone=' + enc(member.phone) + '&accessCode=' + enc(code);
+    var res  = await fetch(url);
+    var json = await res.json();
+
+    if (json.status === 'ok') {
+      infoEl.textContent = '✅ Lecture unlocked! Refreshing your library…';
+      infoEl.style.display = 'block';
+      document.getElementById('redeem-code-input').value = '';
+      // Re-fetch the member data to show the new replay
+      setTimeout(async function() {
+        var res2  = await fetch(SCRIPT + '?action=sendOTP&email=' + enc(member.email));
+        // We just need fresh replays — re-login silently by re-verifying is complex,
+        // so instead reload the page which will restore from sessionStorage after re-login
+        // Simpler: fetch replays via a dedicated refresh
+        refreshReplays(member.email);
+      }, 1000);
+    } else if (json.status === 'invalid_code') {
+      errEl.textContent = '❌ Code not recognised. Please check and try again.';
+      errEl.style.display = 'block';
+    } else {
+      errEl.textContent = 'Something went wrong: ' + (json.message || 'Unknown error');
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+  }
+
+  btn.disabled = false; btn.innerHTML = 'Unlock →';
+}
+
+async function refreshReplays(email) {
+  try {
+    var res  = await fetch(SCRIPT + '?action=getReplays&email=' + enc(email));
+    var json = await res.json();
+    if (json.status === 'ok') {
+      // Update session and re-render replays
+      var saved  = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+      saved.replays = json.replays;
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(saved));
+      renderReplays(json.replays);
+      // Update stats
+      var now      = Date.now();
+      var active   = json.replays.filter(function(r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
+      var expiring = active.filter(function(r) { return r.expiryDate && (new Date(r.expiryDate) - now) < 30*86400000; });
+      document.getElementById('stat-total').textContent    = json.replays.length;
+      document.getElementById('stat-active').textContent   = active.length;
+      document.getElementById('stat-expiring').textContent = expiring.length;
+      document.getElementById('hero-sub').textContent = json.replays.length
+        ? 'You have ' + json.replays.length + ' replay' + (json.replays.length !== 1 ? 's' : '') + ' in your library.'
+        : 'Your replays will appear here after attending a lecture.';
+      // Close panel
+      document.getElementById('redeem-panel').classList.remove('open');
+      document.getElementById('redeem-toggle-btn').classList.remove('open');
+    }
+  } catch(e) {
+    document.getElementById('redeem-info').textContent = '✅ Code redeemed! Sign out and sign back in to see your new replay.';
+  }
 }
 
 // ── VIDEO MODAL ───────────────────────────────────────
