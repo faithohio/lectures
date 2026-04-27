@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard — Lecture Series</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0d0d0d; --red: #c0181a; --red-dark: #96100f;
+      --red-glow: rgba(192,24,26,.18); --gold: #c9933a;
+      --gold-light: rgba(201,147,58,.12); --card: #161616;
+      --border: #2a2a2a; --bg: #0d0d0d; --text: #f0f0f0; --text-dim: #888;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); font-family: 'Anybody', sans-serif; color: var(--text); min-height: 100vh; }
+
+    /* ── AUTH SCREENS ── */
+    .auth-screen {
+      min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; padding: 2rem; position: relative; z-index: 1;
+    }
+    .auth-wrap { width: 100%; max-width: 440px; text-align: center; }
+    .auth-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25);
+      color: var(--red); font-size: .7rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; padding: .3rem .9rem; border-radius: 2px; margin-bottom: 1.5rem;
+    }
+    .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
+    .auth-wrap h1 {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 400;
+      line-height: 1.08; letter-spacing: .02em; margin-bottom: .7rem;
+    }
+    .auth-wrap h1 em { color: var(--red); font-style: italic; }
+    .auth-wrap > p { font-size: .9rem; color: var(--text-dim); margin-bottom: 1.8rem; line-height: 1.6; font-weight: 300; }
+
+    .auth-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.8rem;
+      box-shadow: 0 0 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+
+    /* Tab switcher */
+    .auth-tabs { display: flex; gap: 0; margin-bottom: 1.6rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .auth-tab {
+      flex: 1; background: none; border: none; color: var(--text-dim);
+      font-family: 'Anybody', sans-serif; font-size: .85rem; font-weight: 600;
+      padding: .65rem; cursor: pointer; transition: all .2s; letter-spacing: .03em;
+    }
+    .auth-tab.active { background: var(--red); color: #fff; }
+
+    label {
+      display: block; font-size: .74rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--text-dim); margin-bottom: .4rem; text-align: left;
+    }
+    .field { margin-bottom: 1rem; }
+    .auth-card input {
+      width: 100%; background: #111; border: 1.5px solid var(--border);
+      border-radius: 8px; padding: .82rem 1rem;
+      font-family: 'Anybody', sans-serif; font-size: .97rem;
+      color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    .auth-card input::placeholder { color: #3a3a3a; }
+    .auth-card input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
+
+    .code-input { text-transform: uppercase; letter-spacing: .15em; font-weight: 700; font-size: 1.1rem !important; text-align: center; }
+
+    .otp-inputs { display: flex; gap: .5rem; justify-content: center; margin-bottom: 1rem; }
+    .otp-inputs input {
+      width: 50px; height: 56px; text-align: center; font-size: 1.4rem;
+      font-weight: 700; letter-spacing: 0; padding: 0;
+    }
+
+    .err-msg {
+      background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25);
+      color: #f87171; font-size: .82rem; padding: .6rem .9rem;
+      border-radius: 6px; margin-bottom: 1rem; display: none; text-align: left;
+    }
+    .info-msg {
+      background: rgba(201,147,58,.08); border: 1px solid rgba(201,147,58,.2);
+      color: var(--gold); font-size: .82rem; padding: .6rem .9rem;
+      border-radius: 6px; margin-bottom: 1rem; text-align: left; display: none;
+    }
+
+    .btn {
+      width: 100%; border: none; border-radius: 8px; padding: .88rem;
+      font-family: 'Anybody', sans-serif; font-size: .97rem; font-weight: 700;
+      cursor: pointer; transition: all .2s; letter-spacing: .03em;
+    }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(192,24,26,.35); }
+    .btn-red:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border); color: var(--text-dim);
+      font-size: .84rem; margin-top: .7rem;
+    }
+    .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
+
+    .auth-note { margin-top: 1rem; font-size: .78rem; color: #444; }
+    .spinner {
+      display: inline-block; width: 15px; height: 15px;
+      border: 2px solid rgba(255,255,255,.25); border-top-color: #fff;
+      border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: .4rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .countdown { font-size: .78rem; color: var(--text-dim); margin-top: .8rem; }
+    .countdown span { color: var(--gold); font-weight: 700; }
+
+    /* ── DASHBOARD ── */
+    #dashboard-screen { display: none; }
+
+    .site-header {
+      background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
+    }
+    .site-header::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
+    }
+    .logo { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.35rem; font-weight: 400; }
+    .logo em { color: var(--red); }
+    .header-right { display: flex; align-items: center; gap: .8rem; }
+    .member-pill {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--gold-light); border: 1px solid rgba(201,147,58,.25);
+      color: var(--gold); font-size: .72rem; font-weight: 700;
+      letter-spacing: .07em; padding: .28rem .75rem; border-radius: 20px; text-transform: uppercase;
+    }
+    .btn-signout {
+      background: none; border: 1px solid var(--border); color: var(--text-dim);
+      font-family: 'Anybody', sans-serif; font-size: .78rem; padding: .32rem .75rem;
+      border-radius: 6px; cursor: pointer; transition: all .2s;
+    }
+    .btn-signout:hover { border-color: var(--red); color: var(--red); }
+
+    .dash-hero {
+      background: #111; border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden;
+    }
+    .dash-hero::before {
+      content: 'DASHBOARD'; position: absolute; top: 50%; right: -1rem;
+      transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: clamp(4rem, 12vw, 9rem); color: rgba(255,255,255,.02);
+      pointer-events: none; white-space: nowrap;
+    }
+    .hero-inner { max-width: 1060px; margin: 0 auto; position: relative; }
+    .hero-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .5rem; }
+    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: .02em; margin-bottom: .4rem; }
+    .hero-sub { font-size: .88rem; color: var(--text-dim); font-weight: 300; }
+
+    .stats-row {
+      max-width: 1060px; margin: 2rem auto 0; padding: 0 1.5rem;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1rem;
+    }
+    .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.3rem; border-top: 3px solid var(--red); }
+    .stat-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: .3rem; }
+    .stat-value { font-family: 'Anton', sans-serif; font-style: italic; font-size: 2rem; font-weight: 400; }
+    .stat-sub { font-size: .74rem; color: var(--text-dim); margin-top: .2rem; }
+
+    .dash-main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+    .section-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.4rem; }
+    .section-head h2 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; font-weight: 400; white-space: nowrap; }
+    .section-head h2 em { color: var(--red); }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* Upcoming */
+    .upcoming-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 3rem; }
+    .upcoming-top { background: var(--red); padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem; }
+    .upcoming-top h3 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.5rem; font-weight: 400; color: #fff; }
+    .date-badge { background: rgba(0,0,0,.25); color: #fff; font-size: .8rem; font-weight: 700; padding: .35rem .85rem; border-radius: 20px; }
+    .upcoming-body { padding: 1.5rem; }
+    .upcoming-meta { display: flex; flex-wrap: wrap; gap: 1.2rem; margin-bottom: 1rem; }
+    .meta-item { font-size: .83rem; color: var(--text-dim); }
+    .meta-item strong { color: var(--text); }
+    .upcoming-desc { font-size: .9rem; color: var(--text-dim); line-height: 1.6; font-weight: 300; margin-bottom: 1.4rem; }
+    .upcoming-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
+    .btn-register {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: var(--red); color: #fff; border: none; border-radius: 8px;
+      padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem;
+      font-weight: 700; cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    .btn-register:hover { background: var(--red-dark); }
+    .btn-refer {
+      display: inline-flex; align-items: center; gap: .4rem;
+      background: transparent; border: 1px solid var(--gold); color: var(--gold);
+      border-radius: 8px; padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif;
+      font-size: .88rem; font-weight: 700; text-decoration: none; transition: all .2s;
+    }
+    .btn-refer:hover { background: var(--gold-light); }
+
+    /* Replay grid */
+    .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 1.1rem; }
+    .replay-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; transition: all .25s; animation: cardIn .35s ease both;
+    }
+    @keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .replay-card:hover { border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.4); }
+    .replay-thumb { position: relative; aspect-ratio: 16/9; background: #1a1a1a; overflow: hidden; cursor: pointer; }
+    .thumb-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; color: rgba(255,255,255,.06); text-align: center; padding: 1rem; line-height: 1.2; }
+    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(192,24,26,.1) 0%, rgba(0,0,0,.45) 100%); }
+    .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 50px; height: 50px; background: rgba(192,24,26,.88); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 4px 18px rgba(192,24,26,.5); }
+    .play-btn svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
+    .replay-card:hover .play-btn { transform: translate(-50%,-50%) scale(1.1); }
+    .duration-tag { position: absolute; bottom: .6rem; right: .65rem; background: rgba(0,0,0,.8); color: #fff; font-size: .7rem; font-weight: 700; padding: .18rem .5rem; border-radius: 4px; }
+    .status-tag { position: absolute; top: .6rem; left: .65rem; font-size: .68rem; font-weight: 700; padding: .2rem .6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: .07em; }
+    .tag-active   { background: rgba(30,104,64,.85); color: #6ee7a0; }
+    .tag-soon     { background: rgba(201,147,58,.85); color: #fff; }
+    .tag-expired  { background: rgba(192,24,26,.85); color: #fff; }
+
+    .replay-body { padding: 1rem 1.15rem; }
+    .replay-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
+    .replay-date { font-size: .73rem; color: var(--gold); font-weight: 600; }
+    .replay-cat { font-size: .67rem; font-weight: 700; text-transform: uppercase; background: rgba(255,255,255,.05); color: var(--text-dim); padding: .16rem .5rem; border-radius: 3px; }
+    .replay-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.1rem; font-weight: 400; line-height: 1.2; margin-bottom: .4rem; transition: color .2s; }
+    .replay-card:hover .replay-title { color: var(--red); }
+    .replay-desc { font-size: .83rem; color: var(--text-dim); line-height: 1.55; font-weight: 300; }
+
+    .replay-footer { padding: .7rem 1.15rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .expiry-note { font-size: .74rem; color: var(--text-dim); }
+    .expiry-note.soon { color: var(--gold); font-weight: 600; }
+    .expiry-note.expired { color: var(--red); }
+    .watch-link { display: inline-flex; align-items: center; gap: .3rem; color: var(--red); font-size: .8rem; font-weight: 700; text-decoration: none; transition: gap .2s; }
+    .watch-link:hover { gap: .5rem; }
+    .watch-link svg { width: 11px; height: 11px; fill: currentColor; }
+    .watch-link.dim { color: var(--text-dim); pointer-events: none; }
+
+    .empty-replays { background: var(--card); border: 1px dashed var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; color: var(--text-dim); }
+    .empty-replays .icon { font-size: 2.2rem; margin-bottom: 1rem; }
+    .empty-replays p { font-size: .9rem; line-height: 1.6; font-weight: 300; }
+
+    .hidden { display: none !important; }
+    @media (max-width: 600px) {
+      .site-header { padding: .9rem 1rem; }
+      .dash-hero { padding: 2rem 1.2rem 1.5rem; }
+      .dash-main { padding: 1.8rem 1rem 4rem; }
+      .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     SCREEN 1A — NEW MEMBER REGISTRATION
+════════════════════════════════════ -->
+<div id="screen-register" class="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-eyebrow"><span class="dot"></span> Members Portal</div>
+    <h1>Your Lecture<br/><em>Dashboard</em></h1>
+    <p>First time here? Enter your details and access code.<br/>Already have an account? Switch to Sign In.</p>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="showTab('register')">New Member</button>
+        <button class="auth-tab" onclick="showTab('login')">Sign In</button>
+      </div>
+
+      <div class="field">
+        <label for="reg-name">Full Name</label>
+        <input type="text" id="reg-name" placeholder="e.g. Amina Bello" autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label for="reg-email">Email Address</label>
+        <input type="email" id="reg-email" placeholder="e.g. amina@gmail.com" autocomplete="email"/>
+      </div>
+      <div class="field">
+        <label for="reg-phone">Phone Number</label>
+        <input type="tel" id="reg-phone" placeholder="e.g. 08012345678" autocomplete="tel"/>
+      </div>
+      <div class="field">
+        <label for="reg-code">Access Code</label>
+        <input type="text" id="reg-code" class="code-input" placeholder="e.g. APR2025-A1B2" autocomplete="off"
+          onkeydown="if(event.key==='Enter') submitRegistration()"/>
+      </div>
+
+      <div class="err-msg" id="reg-err"></div>
+      <div class="info-msg" id="reg-info"></div>
+
+      <button class="btn btn-red" id="reg-btn" onclick="submitRegistration()">Create My Account →</button>
+    </div>
+    <p class="auth-note">Your access code is given to you after attending or purchasing a lecture.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 1B — RETURNING MEMBER LOGIN
+════════════════════════════════════ -->
+<div id="screen-login" class="auth-screen hidden">
+  <div class="auth-wrap">
+    <div class="auth-eyebrow"><span class="dot"></span> Members Portal</div>
+    <h1>Your Lecture<br/><em>Dashboard</em></h1>
+    <p>Enter your email and we'll send you a one-time login code.</p>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab" onclick="showTab('register')">New Member</button>
+        <button class="auth-tab active" onclick="showTab('login')">Sign In</button>
+      </div>
+
+      <div class="field">
+        <label for="login-email">Email Address</label>
+        <input type="email" id="login-email" placeholder="e.g. amina@gmail.com" autocomplete="email"
+          onkeydown="if(event.key==='Enter') requestOTP()"/>
+      </div>
+
+      <div class="err-msg" id="login-err"></div>
+
+      <button class="btn btn-red" id="login-btn" onclick="requestOTP()">Send Login Code →</button>
+    </div>
+    <p class="auth-note">New here? Switch to New Member to register.</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 2 — OTP ENTRY
+════════════════════════════════════ -->
+<div id="screen-otp" class="auth-screen hidden">
+  <div class="auth-wrap">
+    <div class="auth-eyebrow"><span class="dot"></span> Check Your Email</div>
+    <h1>Enter Your<br/><em>Code</em></h1>
+    <p>We sent a 6-digit code to<br/><strong id="otp-email-show" style="color:var(--text)"></strong></p>
+
+    <div class="auth-card">
+      <label>6-Digit Code</label>
+      <div class="otp-inputs" id="otp-inputs">
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,0)" onkeydown="otpBack(event,this,0)"/>
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,1)" onkeydown="otpBack(event,this,1)"/>
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,2)" onkeydown="otpBack(event,this,2)"/>
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,3)" onkeydown="otpBack(event,this,3)"/>
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,4)" onkeydown="otpBack(event,this,4)"/>
+        <input type="text" maxlength="1" inputmode="numeric" onkeyup="otpNext(this,5)" onkeydown="otpBack(event,this,5)"/>
+      </div>
+      <div class="err-msg" id="otp-err"></div>
+      <button class="btn btn-red" id="otp-btn" onclick="verifyOTP()">Verify & Sign In →</button>
+      <button class="btn btn-ghost" onclick="backToLogin()">← Use a different email</button>
+      <div class="countdown" id="otp-countdown">Resend in <span id="countdown-val">60</span>s</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 3 — DASHBOARD
+════════════════════════════════════ -->
+<div id="dashboard-screen">
+  <header class="site-header">
+    <div class="logo">Lecture<em>Series</em></div>
+    <div class="header-right">
+      <span class="member-pill">★ Member</span>
+      <button class="btn-signout" onclick="signOut()">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="dash-hero">
+    <div class="hero-inner">
+      <div class="hero-label">Welcome back</div>
+      <div class="hero-name" id="hero-name">—</div>
+      <div class="hero-sub" id="hero-sub">Your personal replay library.</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">My Replays</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">lectures unlocked</div></div>
+    <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub">still accessible</div></div>
+    <div class="stat-card"><div class="stat-label">Expiring Soon</div><div class="stat-value" id="stat-expiring">—</div><div class="stat-sub">within 30 days</div></div>
+  </div>
+
+  <main class="dash-main">
+    <div class="section-head">
+      <h2>Next <em>Lecture</em></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="upcoming-card" id="upcoming-card">
+      <div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem;">Loading…</div>
+    </div>
+
+    <div class="section-head" style="margin-top:2.5rem;">
+      <h2>My <em>Replays</em></h2>
+      <div class="section-line"></div>
+    </div>
+    <div id="replays-container">
+      <div style="text-align:center;padding:3rem;color:var(--text-dim);">
+        <span class="spinner" style="border-top-color:var(--red);border-color:var(--border);"></span>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="config.js"></script>
+<script>
+var SCRIPT = (typeof GOOGLE_SCRIPT_URL !== 'undefined') ? GOOGLE_SCRIPT_URL : '';
+var SESSION_KEY = 'lectureMember';
+var currentEmail = '';
+var countdownTimer = null;
+
+// ── INIT ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  var saved = sessionStorage.getItem(SESSION_KEY);
+  if (saved) { try { renderDashboard(JSON.parse(saved)); return; } catch(e) {} }
+  showScreen('screen-register');
+});
+
+// ── TAB SWITCHER ─────────────────────────────────────
+function showTab(tab) {
+  if (tab === 'register') {
+    showScreen('screen-register');
+  } else {
+    showScreen('screen-login');
+  }
+}
+
+function showScreen(id) {
+  ['screen-register','screen-login','screen-otp','dashboard-screen'].forEach(function(s) {
+    var el = document.getElementById(s);
+    if (el) { el.classList.add('hidden'); el.style.display = ''; }
+  });
+  var target = document.getElementById(id);
+  if (target) {
+    target.classList.remove('hidden');
+    if (id === 'dashboard-screen') target.style.display = 'block';
+  }
+}
+
+// ── REGISTRATION ─────────────────────────────────────
+async function submitRegistration() {
+  var name  = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim().toLowerCase();
+  var phone = document.getElementById('reg-phone').value.trim();
+  var code  = document.getElementById('reg-code').value.trim().toUpperCase();
+  var errEl = document.getElementById('reg-err');
+  var infoEl = document.getElementById('reg-info');
+  var btn   = document.getElementById('reg-btn');
+
+  errEl.style.display = 'none';
+  infoEl.style.display = 'none';
+
+  if (!name || !email || !phone || !code) {
+    errEl.textContent = 'Please fill in all fields.';
+    errEl.style.display = 'block'; return;
+  }
+  if (!email.includes('@')) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating account…';
+
+  try {
+    var url = SCRIPT + '?action=register&name=' + enc(name) + '&email=' + enc(email) + '&phone=' + enc(phone) + '&accessCode=' + enc(code);
+    var res  = await fetch(url);
+    var json = await res.json();
+
+    if (json.status === 'ok') {
+      infoEl.textContent = '✅ Account created! Check your email for a welcome message. You can now sign in.';
+      infoEl.style.display = 'block';
+      btn.innerHTML = '✓ Done! Switch to Sign In';
+      btn.disabled = false;
+      btn.onclick = function() { showTab('login'); };
+      document.getElementById('login-email').value = email;
+    } else if (json.status === 'invalid_code') {
+      errEl.textContent = '❌ Access code not recognised. Please check and try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.innerHTML = 'Create My Account →';
+    } else if (json.status === 'code_used') {
+      errEl.textContent = '⚠️ This code has already been used. Contact us if this is a mistake.';
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.innerHTML = 'Create My Account →';
+    } else {
+      errEl.textContent = 'Something went wrong: ' + (json.message || 'Unknown error');
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.innerHTML = 'Create My Account →';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please check your internet and try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false; btn.innerHTML = 'Create My Account →';
+  }
+}
+
+// ── REQUEST OTP ───────────────────────────────────────
+async function requestOTP() {
+  var email = document.getElementById('login-email').value.trim().toLowerCase();
+  var errEl = document.getElementById('login-err');
+  var btn   = document.getElementById('login-btn');
+
+  errEl.style.display = 'none';
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending…';
+
+  try {
+    var res  = await fetch(SCRIPT + '?action=sendOTP&email=' + enc(email));
+    var json = await res.json();
+
+    if (json.status === 'ok') {
+      currentEmail = email;
+      document.getElementById('otp-email-show').textContent = email;
+      showScreen('screen-otp');
+      document.getElementById('otp-inputs').querySelectorAll('input')[0].focus();
+      startCountdown();
+    } else if (json.status === 'not_found') {
+      errEl.textContent = '⚠️ This email isn\'t registered. Are you a new member? Switch to New Member to register.';
+      errEl.style.display = 'block';
+    } else {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please try again.';
+    errEl.style.display = 'block';
+  }
+
+  btn.disabled = false; btn.innerHTML = 'Send Login Code →';
+}
+
+// ── OTP INPUTS ────────────────────────────────────────
+function otpNext(input, idx) {
+  input.value = input.value.replace(/[^0-9]/g, '');
+  var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
+  if (input.value && idx < 5) inputs[idx + 1].focus();
+  if (idx === 5 && input.value) verifyOTP();
+}
+function otpBack(e, input, idx) {
+  if (e.key === 'Backspace' && !input.value && idx > 0)
+    document.getElementById('otp-inputs').querySelectorAll('input')[idx - 1].focus();
+}
+
+async function verifyOTP() {
+  var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
+  var code   = [...inputs].map(function(i) { return i.value; }).join('');
+  var errEl  = document.getElementById('otp-err');
+  var btn    = document.getElementById('otp-btn');
+
+  errEl.style.display = 'none';
+  if (code.length < 6) { errEl.textContent = 'Please enter all 6 digits.'; errEl.style.display = 'block'; return; }
+
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying…';
+
+  try {
+    var res  = await fetch(SCRIPT + '?action=verifyOTP&email=' + enc(currentEmail) + '&code=' + code);
+    var json = await res.json();
+
+    if (json.status === 'ok') {
+      clearInterval(countdownTimer);
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(json.member));
+      renderDashboard(json.member);
+    } else {
+      var msg = json.status === 'expired' ? '⏱ Code expired. Request a new one.' : '❌ Incorrect code. Try again.';
+      errEl.textContent = msg; errEl.style.display = 'block';
+      inputs.forEach(function(i) { i.value = ''; });
+      inputs[0].focus();
+    }
+  } catch(e) {
+    errEl.textContent = 'Connection error. Please try again.'; errEl.style.display = 'block';
+  }
+
+  btn.disabled = false; btn.innerHTML = 'Verify & Sign In →';
+}
+
+function backToLogin() { clearInterval(countdownTimer); showScreen('screen-login'); }
+
+function startCountdown() {
+  var secs = 60;
+  document.getElementById('countdown-val').textContent = secs;
+  document.getElementById('otp-countdown').style.display = 'block';
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(function() {
+    secs--;
+    var el = document.getElementById('countdown-val');
+    if (el) el.textContent = secs;
+    if (secs <= 0) {
+      clearInterval(countdownTimer);
+      var cd = document.getElementById('otp-countdown');
+      if (cd) cd.innerHTML = '<a href="#" onclick="requestOTP();return false;" style="color:var(--gold)">Resend code</a>';
+    }
+  }, 1000);
+}
+
+// ── DASHBOARD RENDER ──────────────────────────────────
+function renderDashboard(member) {
+  showScreen('dashboard-screen');
+  var replays = member.replays || [];
+  var now = Date.now();
+
+  document.getElementById('hero-name').textContent = member.name || member.email;
+  document.getElementById('hero-sub').textContent = replays.length
+    ? 'You have ' + replays.length + ' replay' + (replays.length !== 1 ? 's' : '') + ' in your library.'
+    : 'Your replays will appear here after attending a lecture.';
+
+  var active   = replays.filter(function(r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
+  var expiring = active.filter(function(r) { return r.expiryDate && (new Date(r.expiryDate) - now) < 30*86400000; });
+
+  document.getElementById('stat-total').textContent    = replays.length;
+  document.getElementById('stat-active').textContent   = active.length;
+  document.getElementById('stat-expiring').textContent = expiring.length;
+
+  renderUpcoming(member.upcoming);
+  renderReplays(replays);
+}
+
+function renderUpcoming(u) {
+  var card = document.getElementById('upcoming-card');
+  if (!u || !u.title) {
+    card.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem;">No upcoming lecture scheduled yet — check back soon.</div>';
+    return;
+  }
+  card.innerHTML =
+    '<div class="upcoming-top">'
+    + '<h3>' + esc(u.title) + '</h3>'
+    + '<span class="date-badge">' + esc(u.date) + '</span>'
+    + '</div>'
+    + '<div class="upcoming-body">'
+    + '<div class="upcoming-meta">'
+    + (u.venue ? '<div class="meta-item">📍 <strong>' + esc(u.venue) + '</strong></div>' : '')
+    + (u.time  ? '<div class="meta-item">🕕 <strong>' + esc(u.time)  + '</strong></div>' : '')
+    + (u.price ? '<div class="meta-item">💰 <strong>₦' + esc(u.price) + '</strong></div>' : '')
+    + '</div>'
+    + (u.description ? '<p class="upcoming-desc">' + esc(u.description) + '</p>' : '')
+    + '<div class="upcoming-actions">'
+    + (u.registerUrl ? '<a class="btn-register" href="' + u.registerUrl + '" target="_blank">Register Now →</a>' : '')
+    + '<a class="btn-refer" href="index.html">👥 Refer a Friend</a>'
+    + '</div></div>';
+}
+
+function renderReplays(replays) {
+  var container = document.getElementById('replays-container');
+  if (!replays.length) {
+    container.innerHTML = '<div class="empty-replays"><div class="icon">🎬</div><p>No replays yet.<br/>You\'ll see them here after you attend a lecture and your code is registered.</p></div>';
+    return;
+  }
+
+  var now = Date.now();
+  var html = '<div class="replay-grid">';
+
+  replays.forEach(function(r) {
+    var expDate  = r.expiryDate ? new Date(r.expiryDate) : null;
+    var daysLeft = expDate ? Math.ceil((expDate - now) / 86400000) : null;
+    var expired  = daysLeft !== null && daysLeft <= 0;
+    var soon     = !expired && daysLeft !== null && daysLeft <= 30;
+
+    var tagCls  = expired ? 'tag-expired' : soon ? 'tag-soon' : 'tag-active';
+    var tagTxt  = expired ? 'Expired' : soon ? daysLeft + 'd left' : 'Active';
+    var expNote = expired
+      ? '<span class="expiry-note expired">Expired ' + (expDate ? expDate.toLocaleDateString('en-NG') : '') + '</span>'
+      : daysLeft !== null
+        ? '<span class="expiry-note' + (soon ? ' soon' : '') + '">Expires ' + expDate.toLocaleDateString('en-NG') + '</span>'
+        : '<span class="expiry-note">—</span>';
+
+    var watchBtn = expired
+      ? '<span class="watch-link dim">Expired</span>'
+      : r.videoUrl
+        ? '<a class="watch-link" href="' + r.videoUrl + '" target="_blank" rel="noopener">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+        : '<span class="watch-link dim">Coming soon</span>';
+
+    html +=
+      '<div class="replay-card">'
+      + '<div class="replay-thumb" onclick="' + (!expired && r.videoUrl ? 'window.open(\'' + r.videoUrl + '\',\'_blank\')' : '') + '">'
+      + '<div class="thumb-text">' + esc(r.title).toUpperCase() + '</div>'
+      + '<div class="thumb-overlay"></div>'
+      + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
+      + (!expired ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>' : '')
+      + (r.duration ? '<span class="duration-tag">' + esc(r.duration) + '</span>' : '')
+      + '</div>'
+      + '<div class="replay-body">'
+      + '<div class="replay-meta"><span class="replay-date">' + esc(r.lectureDate) + '</span><span class="replay-cat">' + esc(r.category) + '</span></div>'
+      + '<div class="replay-title">' + esc(r.title) + '</div>'
+      + '<div class="replay-desc">' + esc(r.description) + '</div>'
+      + '</div>'
+      + '<div class="replay-footer">' + expNote + watchBtn + '</div>'
+      + '</div>';
+  });
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ── SIGN OUT ──────────────────────────────────────────
+function signOut() {
+  sessionStorage.removeItem(SESSION_KEY);
+  showScreen('screen-register');
+}
+
+// ── HELPERS ───────────────────────────────────────────
+function enc(str) { return encodeURIComponent(str || ''); }
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
