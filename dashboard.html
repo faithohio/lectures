@@ -380,7 +380,7 @@
 ════════════════════════════════════ -->
 <div id="dashboard-screen">
   <header class="site-header">
-    <div class="logo">Lecture<em>Series</em></div>
+    <div class="logo">FO<em>Lectures</em></div>
     <div class="header-right">
       <span class="member-pill">★ Member</span>
       <button class="btn-signout" onclick="signOut()">Sign Out</button>
@@ -702,14 +702,17 @@ function renderReplays(replays) {
         ? '<span class="expiry-note' + (soon ? ' soon' : '') + '">Expires ' + expDate.toLocaleDateString('en-NG') + '</span>'
         : '<span class="expiry-note">—</span>';
 
+    var safeUrl   = (r.videoUrl || '').replace(/'/g, '&#39;');
+    var safeTitle = (r.title   || '').replace(/'/g, '&#39;');
+
     var watchBtn = expired
       ? '<span class="watch-link dim">Expired</span>'
       : r.videoUrl
-        ? '<a class="watch-link" href="#" onclick="openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ');return false;">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+        ? '<a class="watch-link" href="#" onclick="openVideoModal(\'' + safeUrl + '\',\'' + safeTitle + '\');return false;">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
         : '<span class="watch-link dim">Coming soon</span>';
 
     var thumbClick = !expired && r.videoUrl
-      ? 'openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ')'
+      ? 'openVideoModal(\'' + safeUrl + '\',\'' + safeTitle + '\')'
       : '';
 
     html +=
