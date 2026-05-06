@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Dashboard — FO Lectures</title>
+  <title>My Dashboard — Lecture Series</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -11,15 +11,13 @@
       --red-glow: rgba(192,24,26,.18); --gold: #c9933a;
       --gold-light: rgba(201,147,58,.12); --card: #161616;
       --border: #2a2a2a; --bg: #0d0d0d; --text: #f0f0f0; --text-dim: #888;
+      --green: #1e6840; --green-light: rgba(30,104,64,.15);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); font-family: 'Anybody', sans-serif; color: var(--text); min-height: 100vh; }
 
     /* ── AUTH SCREENS ── */
-    .auth-screen {
-      min-height: 100vh; display: flex; align-items: center;
-      justify-content: center; padding: 2rem; position: relative; z-index: 1;
-    }
+    .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
     .auth-wrap { width: 100%; max-width: 440px; text-align: center; }
     .auth-eyebrow {
       display: inline-flex; align-items: center; gap: .5rem;
@@ -28,142 +26,58 @@
       text-transform: uppercase; padding: .3rem .9rem; border-radius: 2px; margin-bottom: 1.5rem;
     }
     .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.7)} }
-    .auth-wrap h1 {
-      font-family: 'Anton', sans-serif; font-style: italic;
-      font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 400;
-      line-height: 1.08; letter-spacing: .02em; margin-bottom: .7rem;
-    }
-    .auth-wrap h1 em { color: var(--red); font-style: italic; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .auth-wrap h1 { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 400; line-height: 1.08; margin-bottom: .7rem; }
+    .auth-wrap h1 em { color: var(--red); }
     .auth-wrap > p { font-size: .9rem; color: var(--text-dim); margin-bottom: 1.8rem; line-height: 1.6; font-weight: 300; }
-
-    .auth-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 1.8rem;
-      box-shadow: 0 0 50px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.03);
-    }
-
-    /* Tab switcher */
-    .auth-tabs { display: flex; gap: 0; margin-bottom: 1.6rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-    .auth-tab {
-      flex: 1; background: none; border: none; color: var(--text-dim);
-      font-family: 'Anybody', sans-serif; font-size: .85rem; font-weight: 600;
-      padding: .65rem; cursor: pointer; transition: all .2s; letter-spacing: .03em;
-    }
+    .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.8rem; box-shadow: 0 0 50px rgba(0,0,0,.5); }
+    .auth-tabs { display: flex; margin-bottom: 1.6rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .auth-tab { flex: 1; background: none; border: none; color: var(--text-dim); font-family: 'Anybody', sans-serif; font-size: .85rem; font-weight: 600; padding: .65rem; cursor: pointer; transition: all .2s; }
     .auth-tab.active { background: var(--red); color: #fff; }
-
-    label {
-      display: block; font-size: .74rem; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--text-dim); margin-bottom: .4rem; text-align: left;
-    }
+    label { display: block; font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: .4rem; text-align: left; }
     .field { margin-bottom: 1rem; }
-    .auth-card input {
-      width: 100%; background: #111; border: 1.5px solid var(--border);
-      border-radius: 8px; padding: .82rem 1rem;
-      font-family: 'Anybody', sans-serif; font-size: .97rem;
-      color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s;
-    }
+    .auth-card input { width: 100%; background: #111; border: 1.5px solid var(--border); border-radius: 8px; padding: .82rem 1rem; font-family: 'Anybody', sans-serif; font-size: .97rem; color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; }
     .auth-card input::placeholder { color: #3a3a3a; }
     .auth-card input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
-
     .code-input { text-transform: uppercase; letter-spacing: .15em; font-weight: 700; font-size: 1.1rem !important; text-align: center; }
-
     .otp-inputs { display: flex; gap: .5rem; justify-content: center; margin-bottom: 1rem; }
-    .otp-inputs input {
-      width: 50px; height: 56px; text-align: center; font-size: 1.4rem;
-      font-weight: 700; letter-spacing: 0; padding: 0;
-    }
-
-    .err-msg {
-      background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25);
-      color: #f87171; font-size: .82rem; padding: .6rem .9rem;
-      border-radius: 6px; margin-bottom: 1rem; display: none; text-align: left;
-    }
-    .info-msg {
-      background: rgba(201,147,58,.08); border: 1px solid rgba(201,147,58,.2);
-      color: var(--gold); font-size: .82rem; padding: .6rem .9rem;
-      border-radius: 6px; margin-bottom: 1rem; text-align: left; display: none;
-    }
-
-    .btn {
-      width: 100%; border: none; border-radius: 8px; padding: .88rem;
-      font-family: 'Anybody', sans-serif; font-size: .97rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; letter-spacing: .03em;
-    }
+    .otp-inputs input { width: 50px; height: 56px; text-align: center; font-size: 1.4rem; font-weight: 700; padding: 0; }
+    .err-msg { background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25); color: #f87171; font-size: .82rem; padding: .6rem .9rem; border-radius: 6px; margin-bottom: 1rem; display: none; text-align: left; }
+    .info-msg { background: rgba(201,147,58,.08); border: 1px solid rgba(201,147,58,.2); color: var(--gold); font-size: .82rem; padding: .6rem .9rem; border-radius: 6px; margin-bottom: 1rem; text-align: left; display: none; }
+    .btn { width: 100%; border: none; border-radius: 8px; padding: .88rem; font-family: 'Anybody', sans-serif; font-size: .97rem; font-weight: 700; cursor: pointer; transition: all .2s; letter-spacing: .03em; }
     .btn-red { background: var(--red); color: #fff; }
     .btn-red:hover { background: var(--red-dark); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(192,24,26,.35); }
     .btn-red:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
-    .btn-ghost {
-      background: transparent; border: 1px solid var(--border); color: var(--text-dim);
-      font-size: .84rem; margin-top: .7rem;
-    }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-dim); font-size: .84rem; margin-top: .7rem; }
     .btn-ghost:hover { border-color: var(--text-dim); color: var(--text); }
-
     .auth-note { margin-top: 1rem; font-size: .78rem; color: #444; }
-    .spinner {
-      display: inline-block; width: 15px; height: 15px;
-      border: 2px solid rgba(255,255,255,.25); border-top-color: #fff;
-      border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: .4rem;
-    }
+    .spinner { display: inline-block; width: 15px; height: 15px; border: 2px solid rgba(255,255,255,.25); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: .4rem; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .countdown { font-size: .78rem; color: var(--text-dim); margin-top: .8rem; }
     .countdown span { color: var(--gold); font-weight: 700; }
 
     /* ── DASHBOARD ── */
     #dashboard-screen { display: none; }
-
-    .site-header {
-      background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem; display: flex; align-items: center;
-      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
-      position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px);
-    }
-    .site-header::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
-    }
+    .site-header { background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
+    .site-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--red), var(--gold), var(--red)); }
     .logo { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.35rem; font-weight: 400; }
     .logo em { color: var(--red); }
     .header-right { display: flex; align-items: center; gap: .8rem; }
-    .member-pill {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: var(--gold-light); border: 1px solid rgba(201,147,58,.25);
-      color: var(--gold); font-size: .72rem; font-weight: 700;
-      letter-spacing: .07em; padding: .28rem .75rem; border-radius: 20px; text-transform: uppercase;
-    }
-    .btn-signout {
-      background: none; border: 1px solid var(--border); color: var(--text-dim);
-      font-family: 'Anybody', sans-serif; font-size: .78rem; padding: .32rem .75rem;
-      border-radius: 6px; cursor: pointer; transition: all .2s;
-    }
+    .member-pill { display: inline-flex; align-items: center; gap: .4rem; background: var(--gold-light); border: 1px solid rgba(201,147,58,.25); color: var(--gold); font-size: .72rem; font-weight: 700; letter-spacing: .07em; padding: .28rem .75rem; border-radius: 20px; text-transform: uppercase; }
+    .btn-signout { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Anybody', sans-serif; font-size: .78rem; padding: .32rem .75rem; border-radius: 6px; cursor: pointer; transition: all .2s; }
     .btn-signout:hover { border-color: var(--red); color: var(--red); }
-
-    .dash-hero {
-      background: #111; border-bottom: 1px solid var(--border);
-      padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden;
-    }
-    .dash-hero::before {
-      content: 'DASHBOARD'; position: absolute; top: 50%; right: -1rem;
-      transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic;
-      font-size: clamp(4rem, 12vw, 9rem); color: rgba(255,255,255,.02);
-      pointer-events: none; white-space: nowrap;
-    }
+    .dash-hero { background: #111; border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden; }
+    .dash-hero::before { content: 'DASHBOARD'; position: absolute; top: 50%; right: -1rem; transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(4rem, 12vw, 9rem); color: rgba(255,255,255,.02); pointer-events: none; white-space: nowrap; }
     .hero-inner { max-width: 1060px; margin: 0 auto; position: relative; }
     .hero-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .5rem; }
-    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; letter-spacing: .02em; margin-bottom: .4rem; }
+    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; margin-bottom: .4rem; }
     .hero-sub { font-size: .88rem; color: var(--text-dim); font-weight: 300; }
-
-    .stats-row {
-      max-width: 1060px; margin: 2rem auto 0; padding: 0 1.5rem;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1rem;
-    }
+    .stats-row { max-width: 1060px; margin: 2rem auto 0; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1rem; }
     .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.3rem; border-top: 3px solid var(--red); }
     .stat-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: .3rem; }
     .stat-value { font-family: 'Anton', sans-serif; font-style: italic; font-size: 2rem; font-weight: 400; }
     .stat-sub { font-size: .74rem; color: var(--text-dim); margin-top: .2rem; }
-
     .dash-main { max-width: 1060px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
-
     .section-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.4rem; }
     .section-head h2 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; font-weight: 400; white-space: nowrap; }
     .section-head h2 em { color: var(--red); }
@@ -180,30 +94,17 @@
     .meta-item strong { color: var(--text); }
     .upcoming-desc { font-size: .9rem; color: var(--text-dim); line-height: 1.6; font-weight: 300; margin-bottom: 1.4rem; }
     .upcoming-actions { display: flex; gap: .8rem; flex-wrap: wrap; }
-    .btn-register {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: var(--red); color: #fff; border: none; border-radius: 8px;
-      padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem;
-      font-weight: 700; cursor: pointer; text-decoration: none; transition: all .2s;
-    }
+    .btn-register { display: inline-flex; align-items: center; gap: .4rem; background: var(--red); color: #fff; border: none; border-radius: 8px; padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: all .2s; }
     .btn-register:hover { background: var(--red-dark); }
-    .btn-refer {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: transparent; border: 1px solid var(--gold); color: var(--gold);
-      border-radius: 8px; padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif;
-      font-size: .88rem; font-weight: 700; text-decoration: none; transition: all .2s;
-    }
+    .btn-refer { display: inline-flex; align-items: center; gap: .4rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 700; text-decoration: none; transition: all .2s; }
     .btn-refer:hover { background: var(--gold-light); }
 
-    /* Replay grid */
-    .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 1.1rem; }
-    .replay-card {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      overflow: hidden; transition: all .25s; animation: cardIn .35s ease both;
-    }
+    /* ── REPLAY CARDS ── */
+    .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.4rem; }
+    .replay-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .25s; animation: cardIn .35s ease both; display: flex; flex-direction: column; }
     @keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-    .replay-card:hover { border-color: var(--red); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.4); }
-    .replay-thumb { position: relative; aspect-ratio: 16/9; background: #1a1a1a; overflow: hidden; cursor: pointer; }
+    .replay-card:hover { border-color: #3a3a3a; }
+    .replay-thumb { position: relative; aspect-ratio: 16/9; background: #1a1a1a; overflow: hidden; cursor: pointer; flex-shrink: 0; }
     .thumb-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; color: rgba(255,255,255,.06); text-align: center; padding: 1rem; line-height: 1.2; }
     .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(192,24,26,.1) 0%, rgba(0,0,0,.45) 100%); }
     .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 50px; height: 50px; background: rgba(192,24,26,.88); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 4px 18px rgba(192,24,26,.5); }
@@ -211,18 +112,15 @@
     .replay-card:hover .play-btn { transform: translate(-50%,-50%) scale(1.1); }
     .duration-tag { position: absolute; bottom: .6rem; right: .65rem; background: rgba(0,0,0,.8); color: #fff; font-size: .7rem; font-weight: 700; padding: .18rem .5rem; border-radius: 4px; }
     .status-tag { position: absolute; top: .6rem; left: .65rem; font-size: .68rem; font-weight: 700; padding: .2rem .6rem; border-radius: 3px; text-transform: uppercase; letter-spacing: .07em; }
-    .tag-active   { background: rgba(30,104,64,.85); color: #6ee7a0; }
-    .tag-soon     { background: rgba(201,147,58,.85); color: #fff; }
-    .tag-expired  { background: rgba(192,24,26,.85); color: #fff; }
-
-    .replay-body { padding: 1rem 1.15rem; }
+    .tag-active  { background: rgba(30,104,64,.85); color: #6ee7a0; }
+    .tag-soon    { background: rgba(201,147,58,.85); color: #fff; }
+    .tag-expired { background: rgba(192,24,26,.85); color: #fff; }
+    .replay-body { padding: 1rem 1.15rem; flex: 1; }
     .replay-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: .5rem; }
     .replay-date { font-size: .73rem; color: var(--gold); font-weight: 600; }
-    .replay-cat { font-size: .67rem; font-weight: 700; text-transform: uppercase; background: rgba(255,255,255,.05); color: var(--text-dim); padding: .16rem .5rem; border-radius: 3px; }
-    .replay-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.1rem; font-weight: 400; line-height: 1.2; margin-bottom: .4rem; transition: color .2s; }
-    .replay-card:hover .replay-title { color: var(--red); }
+    .replay-cat  { font-size: .67rem; font-weight: 700; text-transform: uppercase; background: rgba(255,255,255,.05); color: var(--text-dim); padding: .16rem .5rem; border-radius: 3px; }
+    .replay-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.1rem; font-weight: 400; line-height: 1.2; margin-bottom: .4rem; }
     .replay-desc { font-size: .83rem; color: var(--text-dim); line-height: 1.55; font-weight: 300; }
-
     .replay-footer { padding: .7rem 1.15rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .expiry-note { font-size: .74rem; color: var(--text-dim); }
     .expiry-note.soon { color: var(--gold); font-weight: 600; }
@@ -232,153 +130,124 @@
     .watch-link svg { width: 11px; height: 11px; fill: currentColor; }
     .watch-link.dim { color: var(--text-dim); pointer-events: none; }
 
+    /* ── ASSIGNMENT SECTION ── */
+    .assignment-section {
+      border-top: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      background: rgba(255,255,255,.02);
+    }
+    .assignment-label {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--text-dim); margin-bottom: .75rem;
+      display: flex; align-items: center; gap: .4rem;
+    }
+    .assignment-label::before { content: '📝'; font-size: .8rem; }
+    .assignment-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
+
+    .btn-assignment {
+      display: inline-flex; align-items: center; gap: .4rem;
+      border: none; border-radius: 6px; padding: .5rem 1rem;
+      font-family: 'Anybody', sans-serif; font-size: .8rem; font-weight: 700;
+      cursor: pointer; transition: all .2s; text-decoration: none; white-space: nowrap;
+    }
+    .btn-get {
+      background: rgba(201,147,58,.12); color: var(--gold);
+      border: 1px solid rgba(201,147,58,.25);
+    }
+    .btn-get:hover { background: rgba(201,147,58,.2); }
+    .btn-upload {
+      background: rgba(192,24,26,.1); color: #f87171;
+      border: 1px solid rgba(192,24,26,.25);
+    }
+    .btn-upload:hover { background: rgba(192,24,26,.18); }
+    .btn-submitted {
+      background: var(--green-light); color: #6ee7a0;
+      border: 1px solid rgba(30,104,64,.3); cursor: default;
+    }
+    .btn-uploading {
+      background: rgba(255,255,255,.05); color: var(--text-dim);
+      border: 1px solid var(--border); cursor: not-allowed;
+    }
+
+    /* Hidden file input */
+    .file-input { display: none; }
+
+    /* Upload progress */
+    .upload-progress {
+      margin-top: .6rem; height: 3px; background: var(--border);
+      border-radius: 2px; overflow: hidden; display: none;
+    }
+    .upload-progress-bar {
+      height: 100%; background: var(--red); width: 0%;
+      transition: width .3s; border-radius: 2px;
+    }
+    .upload-err { font-size: .75rem; color: #f87171; margin-top: .5rem; display: none; }
+
+    /* ── MISC ── */
     .empty-replays { background: var(--card); border: 1px dashed var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; color: var(--text-dim); }
     .empty-replays .icon { font-size: 2.2rem; margin-bottom: 1rem; }
     .empty-replays p { font-size: .9rem; line-height: 1.6; font-weight: 300; }
-
     .hidden { display: none !important; }
+
     @media (max-width: 600px) {
       .site-header { padding: .9rem 1rem; }
       .dash-hero { padding: 2rem 1.2rem 1.5rem; }
       .dash-main { padding: 1.8rem 1rem 4rem; }
       .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
+      .replay-grid { grid-template-columns: 1fr; }
     }
-
-    /* ── REDEEM PANEL ── */
-    .btn-redeem-toggle {
-      background: transparent; border: 1px solid var(--red); color: var(--red);
-      font-family: 'Anybody', sans-serif; font-size: .78rem; font-weight: 700;
-      letter-spacing: .04em; padding: .35rem .9rem; border-radius: 6px;
-      cursor: pointer; white-space: nowrap; transition: all .2s; flex-shrink: 0;
-    }
-    .btn-redeem-toggle:hover, .btn-redeem-toggle.open { background: var(--red); color: #fff; }
-
-    .redeem-panel {
-      display: none; background: var(--card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 1.3rem 1.5rem; margin-bottom: 1.6rem;
-      animation: cardIn .2s ease;
-    }
-    .redeem-panel.open { display: block; }
-    .redeem-hint { font-size: .85rem; color: var(--text-dim); margin-bottom: 1rem; font-weight: 300; }
-    .redeem-row { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; }
-    .redeem-input { flex: 1; min-width: 180px; background: #111; border: 1.5px solid var(--border); border-radius: 8px; padding: .75rem 1rem; font-family: 'Anybody', sans-serif; font-size: .97rem; color: var(--text); outline: none; transition: border-color .2s, box-shadow .2s; }
-    .redeem-input::placeholder { color: #3a3a3a; }
-    .redeem-input:focus { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-glow); }
-    .redeem-btn { width: auto; padding: .75rem 1.4rem; }
-
-    /* ── VIDEO MODAL ── */
-    .video-modal-backdrop {
-      display: none; position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,.88); backdrop-filter: blur(6px);
-      align-items: center; justify-content: center; padding: 1.5rem;
-    }
-    .video-modal-backdrop.open { display: flex; }
-    .video-modal {
-      width: 100%; max-width: 860px;
-      background: #111; border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0,0,0,.7);
-      animation: modalIn .22s ease;
-    }
-    @keyframes modalIn { from{opacity:0;transform:scale(.96)} to{opacity:1;transform:scale(1)} }
-    .video-modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .9rem 1.2rem; border-bottom: 1px solid var(--border);
-      background: #0d0d0d;
-    }
-    .video-modal-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.05rem; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 3rem); }
-    .video-modal-close {
-      background: none; border: none; color: var(--text-dim); font-size: 1.5rem;
-      cursor: pointer; line-height: 1; padding: .2rem .4rem; border-radius: 4px;
-      transition: color .2s; flex-shrink: 0;
-    }
-    .video-modal-close:hover { color: var(--red); }
-    .video-modal-player { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
-    .video-modal-player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════
-     SCREEN 1A — NEW MEMBER REGISTRATION
-════════════════════════════════════ -->
+<!-- ════════ SCREEN: NEW MEMBER ════════ -->
 <div id="screen-register" class="auth-screen">
   <div class="auth-wrap">
     <div class="auth-eyebrow"><span class="dot"></span> Members Portal</div>
     <h1>Your Lecture<br/><em>Dashboard</em></h1>
-    <p>First time here? Enter your details and access code.<br/>Already have an account? Switch to Sign In.</p>
-
+    <p>First time? Enter your details and access code.<br/>Already registered? Switch to Sign In.</p>
     <div class="auth-card">
       <div class="auth-tabs">
         <button class="auth-tab active" onclick="showTab('register')">New Member</button>
         <button class="auth-tab" onclick="showTab('login')">Sign In</button>
       </div>
-
-      <div class="field">
-        <label for="reg-name">Full Name</label>
-        <input type="text" id="reg-name" placeholder="e.g. Amina Bello" autocomplete="name"/>
-      </div>
-      <div class="field">
-        <label for="reg-email">Email Address</label>
-        <input type="email" id="reg-email" placeholder="e.g. amina@gmail.com" autocomplete="email"/>
-      </div>
-      <div class="field">
-        <label for="reg-phone">Phone Number</label>
-        <input type="tel" id="reg-phone" placeholder="e.g. 08012345678" autocomplete="tel"/>
-      </div>
-      <div class="field">
-        <label for="reg-code">Access Code</label>
-        <input type="text" id="reg-code" class="code-input" placeholder="e.g. APR2025-A1B2" autocomplete="off"
-          onkeydown="if(event.key==='Enter') submitRegistration()"/>
-      </div>
-
+      <div class="field"><label for="reg-name">Full Name</label><input type="text" id="reg-name" placeholder="e.g. Amina Bello" autocomplete="name"/></div>
+      <div class="field"><label for="reg-email">Email Address</label><input type="email" id="reg-email" placeholder="e.g. amina@gmail.com" autocomplete="email"/></div>
+      <div class="field"><label for="reg-phone">Phone Number</label><input type="tel" id="reg-phone" placeholder="e.g. 08012345678" autocomplete="tel"/></div>
+      <div class="field"><label for="reg-code">Access Code</label><input type="text" id="reg-code" class="code-input" placeholder="e.g. APR2025" autocomplete="off" onkeydown="if(event.key==='Enter') submitRegistration()"/></div>
       <div class="err-msg" id="reg-err"></div>
       <div class="info-msg" id="reg-info"></div>
-
       <button class="btn btn-red" id="reg-btn" onclick="submitRegistration()">Create My Account →</button>
     </div>
-    <p class="auth-note">Your access code is given to you after attending or purchasing a lecture.</p>
+    <p class="auth-note">Your access code is given to you after attending a lecture.</p>
   </div>
 </div>
 
-<!-- ════════════════════════════════════
-     SCREEN 1B — RETURNING MEMBER LOGIN
-════════════════════════════════════ -->
+<!-- ════════ SCREEN: SIGN IN ════════ -->
 <div id="screen-login" class="auth-screen hidden">
   <div class="auth-wrap">
     <div class="auth-eyebrow"><span class="dot"></span> Members Portal</div>
     <h1>Your Lecture<br/><em>Dashboard</em></h1>
-    <p>Enter your email and we'll send you a one-time login code.</p>
-
+    <p>Enter your email and we'll send a one-time login code.</p>
     <div class="auth-card">
       <div class="auth-tabs">
         <button class="auth-tab" onclick="showTab('register')">New Member</button>
         <button class="auth-tab active" onclick="showTab('login')">Sign In</button>
       </div>
-
-      <div class="field">
-        <label for="login-email">Email Address</label>
-        <input type="email" id="login-email" placeholder="e.g. amina@gmail.com" autocomplete="email"
-          onkeydown="if(event.key==='Enter') requestOTP()"/>
-      </div>
-
+      <div class="field"><label for="login-email">Email Address</label><input type="email" id="login-email" placeholder="e.g. amina@gmail.com" autocomplete="email" onkeydown="if(event.key==='Enter') requestOTP()"/></div>
       <div class="err-msg" id="login-err"></div>
-
       <button class="btn btn-red" id="login-btn" onclick="requestOTP()">Send Login Code →</button>
     </div>
     <p class="auth-note">New here? Switch to New Member to register.</p>
   </div>
 </div>
 
-<!-- ════════════════════════════════════
-     SCREEN 2 — OTP ENTRY
-════════════════════════════════════ -->
+<!-- ════════ SCREEN: OTP ════════ -->
 <div id="screen-otp" class="auth-screen hidden">
   <div class="auth-wrap">
     <div class="auth-eyebrow"><span class="dot"></span> Check Your Email</div>
     <h1>Enter Your<br/><em>Code</em></h1>
     <p>We sent a 6-digit code to<br/><strong id="otp-email-show" style="color:var(--text)"></strong></p>
-
     <div class="auth-card">
       <label>6-Digit Code</label>
       <div class="otp-inputs" id="otp-inputs">
@@ -397,12 +266,10 @@
   </div>
 </div>
 
-<!-- ════════════════════════════════════
-     SCREEN 3 — DASHBOARD
-════════════════════════════════════ -->
+<!-- ════════ DASHBOARD ════════ -->
 <div id="dashboard-screen">
   <header class="site-header">
-    <div class="logo">FO<em>Lectures</em></div>
+    <div class="logo">Lecture<em>Series</em></div>
     <div class="header-right">
       <span class="member-pill">★ Member</span>
       <button class="btn-signout" onclick="signOut()">Sign Out</button>
@@ -424,168 +291,95 @@
   </div>
 
   <main class="dash-main">
-    <div class="section-head">
-      <h2>Next <em>Lecture</em></h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="upcoming-card" id="upcoming-card">
-      <div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem;">Loading…</div>
-    </div>
+    <div class="section-head"><h2>Next <em>Lecture</em></h2><div class="section-line"></div></div>
+    <div class="upcoming-card" id="upcoming-card"><div style="padding:2rem;text-align:center;color:var(--text-dim);">Loading…</div></div>
 
-    <div class="section-head" style="margin-top:2.5rem;">
-      <h2>My <em>Replays</em></h2>
-      <div class="section-line"></div>
-      <button class="btn-redeem-toggle" id="redeem-toggle-btn" onclick="toggleRedeemPanel()">＋ Redeem Code</button>
-    </div>
-
-    <!-- Redeem panel -->
-    <div class="redeem-panel" id="redeem-panel">
-      <div class="redeem-inner">
-        <p class="redeem-hint">Bought a new lecture? Enter your access code below to unlock it.</p>
-        <div class="redeem-row">
-          <input type="text" id="redeem-code-input" class="code-input redeem-input" placeholder="e.g. APR2025-A1B2" autocomplete="off"
-            onkeydown="if(event.key==='Enter') submitRedeem()"/>
-          <button class="btn btn-red redeem-btn" id="redeem-btn" onclick="submitRedeem()">Unlock →</button>
-        </div>
-        <div class="err-msg" id="redeem-err"></div>
-        <div class="info-msg" id="redeem-info"></div>
-      </div>
-    </div>
-
-    <div id="replays-container">
-      <div style="text-align:center;padding:3rem;color:var(--text-dim);">
-        <span class="spinner" style="border-top-color:var(--red);border-color:var(--border);"></span>
-      </div>
-    </div>
+    <div class="section-head" style="margin-top:2.5rem;"><h2>My <em>Replays</em></h2><div class="section-line"></div></div>
+    <div id="replays-container"><div style="text-align:center;padding:3rem;color:var(--text-dim);"><span class="spinner" style="border-top-color:var(--red);border-color:var(--border);width:24px;height:24px;border-width:3px;"></span></div></div>
   </main>
-</div>
-
-<!-- ════════════════════════════════════
-     VIDEO MODAL
-════════════════════════════════════ -->
-<div class="video-modal-backdrop" id="video-modal" onclick="closeVideoModal(event)">
-  <div class="video-modal">
-    <div class="video-modal-header">
-      <div class="video-modal-title" id="video-modal-title">—</div>
-      <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
-    </div>
-    <div class="video-modal-player">
-      <iframe id="video-modal-iframe" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-    </div>
-  </div>
 </div>
 
 <script src="config.js"></script>
 <script>
-var SCRIPT = (typeof GOOGLE_SCRIPT_URL !== 'undefined') ? GOOGLE_SCRIPT_URL : '';
+var SCRIPT      = (typeof GOOGLE_SCRIPT_URL !== 'undefined') ? GOOGLE_SCRIPT_URL : '';
 var SESSION_KEY = 'lectureMember';
 var currentEmail = '';
 var countdownTimer = null;
+var memberEmail = '';
 
-// ── INIT ─────────────────────────────────────────────
+// ─── INIT ────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', function() {
   var saved = sessionStorage.getItem(SESSION_KEY);
-  if (saved) { try { renderDashboard(JSON.parse(saved)); return; } catch(e) {} }
+  if (saved) { try { var m = JSON.parse(saved); memberEmail = m.email; renderDashboard(m); return; } catch(e) {} }
   showScreen('screen-register');
 });
 
-// ── TAB SWITCHER ─────────────────────────────────────
-function showTab(tab) {
-  if (tab === 'register') {
-    showScreen('screen-register');
-  } else {
-    showScreen('screen-login');
-  }
-}
+// ─── SCREEN HELPERS ──────────────────────────────────────────
+function showTab(tab) { showScreen(tab === 'register' ? 'screen-register' : 'screen-login'); }
 
 function showScreen(id) {
   ['screen-register','screen-login','screen-otp','dashboard-screen'].forEach(function(s) {
     var el = document.getElementById(s);
-    if (el) { el.classList.add('hidden'); el.style.display = ''; }
+    if (!el) return;
+    el.classList.add('hidden'); el.style.display = '';
   });
-  var target = document.getElementById(id);
-  if (target) {
-    target.classList.remove('hidden');
-    if (id === 'dashboard-screen') target.style.display = 'block';
-  }
+  var t = document.getElementById(id);
+  if (t) { t.classList.remove('hidden'); if (id === 'dashboard-screen') t.style.display = 'block'; }
 }
 
-// ── REGISTRATION ─────────────────────────────────────
+// ─── REGISTRATION ────────────────────────────────────────────
 async function submitRegistration() {
   var name  = document.getElementById('reg-name').value.trim();
   var email = document.getElementById('reg-email').value.trim().toLowerCase();
   var phone = document.getElementById('reg-phone').value.trim();
   var code  = document.getElementById('reg-code').value.trim().toUpperCase();
   var errEl = document.getElementById('reg-err');
-  var infoEl = document.getElementById('reg-info');
+  var infoEl= document.getElementById('reg-info');
   var btn   = document.getElementById('reg-btn');
 
-  errEl.style.display = 'none';
-  infoEl.style.display = 'none';
+  errEl.style.display = 'none'; infoEl.style.display = 'none';
+  if (!name || !email || !phone || !code) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
+  if (!email.includes('@'))               { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
 
-  if (!name || !email || !phone || !code) {
-    errEl.textContent = 'Please fill in all fields.';
-    errEl.style.display = 'block'; return;
-  }
-  if (!email.includes('@')) {
-    errEl.textContent = 'Please enter a valid email address.';
-    errEl.style.display = 'block'; return;
-  }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Creating account…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Creating account…';
 
   try {
-    var url = SCRIPT + '?action=register&name=' + enc(name) + '&email=' + enc(email) + '&phone=' + enc(phone) + '&accessCode=' + enc(code);
-    var res  = await fetch(url);
+    var res  = await fetch(SCRIPT + '?action=register&name=' + enc(name) + '&email=' + enc(email) + '&phone=' + enc(phone) + '&accessCode=' + enc(code));
     var json = await res.json();
-
     if (json.status === 'ok') {
-      infoEl.textContent = '✅ Account created! Check your email for a welcome message. You can now sign in.';
+      infoEl.textContent = '✅ Account created! Check your email. You can now sign in.';
       infoEl.style.display = 'block';
-      btn.innerHTML = '✓ Done! Switch to Sign In';
+      btn.innerHTML = '✓ Done — Switch to Sign In';
       btn.disabled = false;
       btn.onclick = function() { showTab('login'); };
       document.getElementById('login-email').value = email;
     } else if (json.status === 'invalid_code') {
-      errEl.textContent = '❌ Access code not recognised. Please check and try again.';
-      errEl.style.display = 'block';
-      btn.disabled = false; btn.innerHTML = 'Create My Account →';
-    } else if (json.status === 'code_used') {
-      errEl.textContent = '⚠️ This code has already been used. Contact us if this is a mistake.';
-      errEl.style.display = 'block';
+      errEl.textContent = '❌ Access code not recognised. Please check and try again.'; errEl.style.display = 'block';
       btn.disabled = false; btn.innerHTML = 'Create My Account →';
     } else {
-      errEl.textContent = 'Something went wrong: ' + (json.message || 'Unknown error');
-      errEl.style.display = 'block';
+      errEl.textContent = json.message || 'Something went wrong.'; errEl.style.display = 'block';
       btn.disabled = false; btn.innerHTML = 'Create My Account →';
     }
   } catch(e) {
-    errEl.textContent = 'Connection error. Please check your internet and try again.';
-    errEl.style.display = 'block';
+    errEl.textContent = 'Connection error. Please try again.'; errEl.style.display = 'block';
     btn.disabled = false; btn.innerHTML = 'Create My Account →';
   }
 }
 
-// ── REQUEST OTP ───────────────────────────────────────
+// ─── REQUEST OTP ─────────────────────────────────────────────
 async function requestOTP() {
   var email = document.getElementById('login-email').value.trim().toLowerCase();
   var errEl = document.getElementById('login-err');
   var btn   = document.getElementById('login-btn');
 
   errEl.style.display = 'none';
-  if (!email || !email.includes('@')) {
-    errEl.textContent = 'Please enter a valid email address.';
-    errEl.style.display = 'block'; return;
-  }
+  if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
 
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Sending…';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Sending…';
 
   try {
     var res  = await fetch(SCRIPT + '?action=sendOTP&email=' + enc(email));
     var json = await res.json();
-
     if (json.status === 'ok') {
       currentEmail = email;
       document.getElementById('otp-email-show').textContent = email;
@@ -593,21 +387,17 @@ async function requestOTP() {
       document.getElementById('otp-inputs').querySelectorAll('input')[0].focus();
       startCountdown();
     } else if (json.status === 'not_found') {
-      errEl.textContent = '⚠️ This email isn\'t registered. Are you a new member? Switch to New Member to register.';
-      errEl.style.display = 'block';
+      errEl.textContent = '⚠️ Email not registered. Are you new? Switch to New Member.'; errEl.style.display = 'block';
     } else {
-      errEl.textContent = 'Something went wrong. Please try again.';
-      errEl.style.display = 'block';
+      errEl.textContent = 'Something went wrong. Please try again.'; errEl.style.display = 'block';
     }
   } catch(e) {
-    errEl.textContent = 'Connection error. Please try again.';
-    errEl.style.display = 'block';
+    errEl.textContent = 'Connection error. Please try again.'; errEl.style.display = 'block';
   }
-
   btn.disabled = false; btn.innerHTML = 'Send Login Code →';
 }
 
-// ── OTP INPUTS ────────────────────────────────────────
+// ─── OTP ─────────────────────────────────────────────────────
 function otpNext(input, idx) {
   input.value = input.value.replace(/[^0-9]/g, '');
   var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
@@ -618,7 +408,6 @@ function otpBack(e, input, idx) {
   if (e.key === 'Backspace' && !input.value && idx > 0)
     document.getElementById('otp-inputs').querySelectorAll('input')[idx - 1].focus();
 }
-
 async function verifyOTP() {
   var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
   var code   = [...inputs].map(function(i) { return i.value; }).join('');
@@ -633,29 +422,24 @@ async function verifyOTP() {
   try {
     var res  = await fetch(SCRIPT + '?action=verifyOTP&email=' + enc(currentEmail) + '&code=' + code);
     var json = await res.json();
-
     if (json.status === 'ok') {
       clearInterval(countdownTimer);
+      memberEmail = json.member.email;
       sessionStorage.setItem(SESSION_KEY, JSON.stringify(json.member));
       renderDashboard(json.member);
     } else {
-      var msg = json.status === 'expired' ? '⏱ Code expired. Request a new one.' : '❌ Incorrect code. Try again.';
-      errEl.textContent = msg; errEl.style.display = 'block';
-      inputs.forEach(function(i) { i.value = ''; });
-      inputs[0].focus();
+      errEl.textContent = json.status === 'expired' ? '⏱ Code expired. Request a new one.' : '❌ Incorrect code. Try again.';
+      errEl.style.display = 'block';
+      inputs.forEach(function(i) { i.value = ''; }); inputs[0].focus();
     }
   } catch(e) {
     errEl.textContent = 'Connection error. Please try again.'; errEl.style.display = 'block';
   }
-
   btn.disabled = false; btn.innerHTML = 'Verify & Sign In →';
 }
-
 function backToLogin() { clearInterval(countdownTimer); showScreen('screen-login'); }
-
 function startCountdown() {
   var secs = 60;
-  document.getElementById('countdown-val').textContent = secs;
   document.getElementById('otp-countdown').style.display = 'block';
   clearInterval(countdownTimer);
   countdownTimer = setInterval(function() {
@@ -670,14 +454,14 @@ function startCountdown() {
   }, 1000);
 }
 
-// ── DASHBOARD RENDER ──────────────────────────────────
+// ─── DASHBOARD RENDER ────────────────────────────────────────
 function renderDashboard(member) {
   showScreen('dashboard-screen');
   var replays = member.replays || [];
-  var now = Date.now();
+  var now     = Date.now();
 
   document.getElementById('hero-name').textContent = member.name || member.email;
-  document.getElementById('hero-sub').textContent = replays.length
+  document.getElementById('hero-sub').textContent  = replays.length
     ? 'You have ' + replays.length + ' replay' + (replays.length !== 1 ? 's' : '') + ' in your library.'
     : 'Your replays will appear here after attending a lecture.';
 
@@ -699,10 +483,7 @@ function renderUpcoming(u) {
     return;
   }
   card.innerHTML =
-    '<div class="upcoming-top">'
-    + '<h3>' + esc(u.title) + '</h3>'
-    + '<span class="date-badge">' + esc(u.date) + '</span>'
-    + '</div>'
+    '<div class="upcoming-top"><h3>' + esc(u.title) + '</h3><span class="date-badge">' + esc(u.date) + '</span></div>'
     + '<div class="upcoming-body">'
     + '<div class="upcoming-meta">'
     + (u.venue ? '<div class="meta-item">📍 <strong>' + esc(u.venue) + '</strong></div>' : '')
@@ -711,22 +492,22 @@ function renderUpcoming(u) {
     + '</div>'
     + (u.description ? '<p class="upcoming-desc">' + esc(u.description) + '</p>' : '')
     + '<div class="upcoming-actions">'
-    + (u.registerUrl ? '<a class="btn-register" href="' + u.registerUrl + '" target="_blank">Register Now →</a>' : '')
-    + '<a class="btn-refer" href="refer.html">👥 Refer a Friend</a>'
+    + (u.registerUrl ? '<a class="btn-register" href="' + esc(u.registerUrl) + '" target="_blank">Register Now →</a>' : '')
+    + '<a class="btn-refer" href="index.html">👥 Refer a Friend</a>'
     + '</div></div>';
 }
 
 function renderReplays(replays) {
   var container = document.getElementById('replays-container');
   if (!replays.length) {
-    container.innerHTML = '<div class="empty-replays"><div class="icon">🎬</div><p>No replays yet.<br/>You\'ll see them here after you attend a lecture and your code is registered.</p></div>';
+    container.innerHTML = '<div class="empty-replays"><div class="icon">🎬</div><p>No replays yet.<br/>You\'ll see them here after attending a lecture.</p></div>';
     return;
   }
 
-  var now = Date.now();
+  var now  = Date.now();
   var html = '<div class="replay-grid">';
 
-  replays.forEach(function(r) {
+  replays.forEach(function(r, idx) {
     var expDate  = r.expiryDate ? new Date(r.expiryDate) : null;
     var daysLeft = expDate ? Math.ceil((expDate - now) / 86400000) : null;
     var expired  = daysLeft !== null && daysLeft <= 0;
@@ -734,32 +515,42 @@ function renderReplays(replays) {
 
     var tagCls  = expired ? 'tag-expired' : soon ? 'tag-soon' : 'tag-active';
     var tagTxt  = expired ? 'Expired' : soon ? daysLeft + 'd left' : 'Active';
+
     var expNote = expired
       ? '<span class="expiry-note expired">Expired ' + (expDate ? expDate.toLocaleDateString('en-NG') : '') + '</span>'
       : daysLeft !== null
         ? '<span class="expiry-note' + (soon ? ' soon' : '') + '">Expires ' + expDate.toLocaleDateString('en-NG') + '</span>'
         : '<span class="expiry-note">—</span>';
 
-    var safeUrl   = (r.videoUrl || '').replace(/'/g, '&#39;');
-    var safeTitle = (r.title   || '').replace(/'/g, '&#39;');
-
     var watchBtn = expired
       ? '<span class="watch-link dim">Expired</span>'
       : r.videoUrl
-        ? '<a class="watch-link" href="#" onclick="openVideoModal(\'' + safeUrl + '\',\'' + safeTitle + '\');return false;">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>'
+        ? '<a class="watch-link" href="' + esc(r.videoUrl) + '" target="_blank" rel="noopener">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>'
         : '<span class="watch-link dim">Coming soon</span>';
 
-    var thumbClick = !expired && r.videoUrl
-      ? 'openVideoModal(\'' + safeUrl + '\',\'' + safeTitle + '\')'
-      : '';
+    // Assignment section
+    var assignmentHtml = '';
+    if (r.assignmentUrl && !expired) {
+      assignmentHtml =
+        '<div class="assignment-section" id="asgn-' + idx + '">'
+        + '<div class="assignment-label">Assignment</div>'
+        + '<div class="assignment-actions">'
+        + '<a class="btn-assignment btn-get" href="' + esc(r.assignmentUrl) + '" target="_blank" rel="noopener">📥 Get Assignment</a>'
+        + '<button class="btn-assignment btn-upload" onclick="triggerUpload(' + idx + ')" id="upload-btn-' + idx + '">⬆ Upload Submission</button>'
+        + '<input type="file" class="file-input" id="file-input-' + idx + '" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileUpload(this,' + idx + ',\'' + r.lectureId + '\')" />'
+        + '</div>'
+        + '<div class="upload-progress" id="progress-' + idx + '"><div class="upload-progress-bar" id="progress-bar-' + idx + '"></div></div>'
+        + '<div class="upload-err" id="upload-err-' + idx + '"></div>'
+        + '</div>';
+    }
 
     html +=
       '<div class="replay-card">'
-      + '<div class="replay-thumb" onclick="' + thumbClick + '">'
+      + '<div class="replay-thumb" onclick="' + (!expired && r.videoUrl ? 'window.open(\'' + esc(r.videoUrl) + '\',\'_blank\')' : '') + '">'
       + '<div class="thumb-text">' + esc(r.title).toUpperCase() + '</div>'
       + '<div class="thumb-overlay"></div>'
       + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
-      + (!expired ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>' : '')
+      + (!expired ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
       + (r.duration ? '<span class="duration-tag">' + esc(r.duration) + '</span>' : '')
       + '</div>'
       + '<div class="replay-body">'
@@ -768,143 +559,133 @@ function renderReplays(replays) {
       + '<div class="replay-desc">' + esc(r.description) + '</div>'
       + '</div>'
       + '<div class="replay-footer">' + expNote + watchBtn + '</div>'
+      + assignmentHtml
       + '</div>';
   });
 
   html += '</div>';
   container.innerHTML = html;
+
+  // Check submission status for each replay with an assignment
+  replays.forEach(function(r, idx) {
+    if (r.assignmentUrl && !r.expiryDate || (r.assignmentUrl && new Date(r.expiryDate) > now)) {
+      checkSubmissionStatus(idx, r.lectureId);
+    }
+  });
 }
 
-// ── REDEEM CODE ───────────────────────────────────────
-function toggleRedeemPanel() {
-  var panel = document.getElementById('redeem-panel');
-  var btn   = document.getElementById('redeem-toggle-btn');
-  var isOpen = panel.classList.toggle('open');
-  btn.classList.toggle('open', isOpen);
-  if (isOpen) document.getElementById('redeem-code-input').focus();
-  // reset messages
-  document.getElementById('redeem-err').style.display  = 'none';
-  document.getElementById('redeem-info').style.display = 'none';
+// ─── ASSIGNMENT UPLOAD ───────────────────────────────────────
+function triggerUpload(idx) {
+  document.getElementById('file-input-' + idx).click();
 }
 
-async function submitRedeem() {
-  var code   = document.getElementById('redeem-code-input').value.trim().toUpperCase();
-  var errEl  = document.getElementById('redeem-err');
-  var infoEl = document.getElementById('redeem-info');
-  var btn    = document.getElementById('redeem-btn');
+async function handleFileUpload(input, idx, lectureId) {
+  var file    = input.files[0];
+  if (!file) return;
+
+  var uploadBtn = document.getElementById('upload-btn-' + idx);
+  var progressEl = document.getElementById('progress-' + idx);
+  var progressBar= document.getElementById('progress-bar-' + idx);
+  var errEl   = document.getElementById('upload-err-' + idx);
+
+  // Max 10MB
+  if (file.size > 10 * 1024 * 1024) {
+    errEl.textContent = 'File too large. Maximum size is 10MB.';
+    errEl.style.display = 'block'; return;
+  }
 
   errEl.style.display = 'none';
-  infoEl.style.display = 'none';
+  uploadBtn.className = 'btn-assignment btn-uploading';
+  uploadBtn.textContent = 'Uploading…';
+  uploadBtn.disabled = true;
+  progressEl.style.display = 'block';
 
-  if (!code) { errEl.textContent = 'Please enter your access code.'; errEl.style.display = 'block'; return; }
-
-  var saved = sessionStorage.getItem(SESSION_KEY);
-  if (!saved) { errEl.textContent = 'Session expired. Please sign in again.'; errEl.style.display = 'block'; return; }
-  var member = JSON.parse(saved);
-
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Unlocking…';
+  // Animate progress bar (fake smooth progress while uploading)
+  var pct = 0;
+  var progressTimer = setInterval(function() {
+    pct = Math.min(pct + 3, 85);
+    progressBar.style.width = pct + '%';
+  }, 100);
 
   try {
-    var url = SCRIPT + '?action=register&name=' + enc(member.name) + '&email=' + enc(member.email) + '&phone=' + enc(member.phone) + '&accessCode=' + enc(code);
-    var res  = await fetch(url);
+    // Read file as base64
+    var base64 = await readFileAsBase64(file);
+
+    var formData = new URLSearchParams();
+    formData.append('action',    'uploadSubmission');
+    formData.append('email',     memberEmail);
+    formData.append('lectureId', lectureId);
+    formData.append('fileName',  file.name);
+    formData.append('mimeType',  file.type || 'application/octet-stream');
+    formData.append('fileData',  base64);
+
+    var res  = await fetch(SCRIPT, { method: 'POST', body: formData });
     var json = await res.json();
 
+    clearInterval(progressTimer);
+    progressBar.style.width = '100%';
+
     if (json.status === 'ok') {
-      infoEl.textContent = '✅ Lecture unlocked! Refreshing your library…';
-      infoEl.style.display = 'block';
-      document.getElementById('redeem-code-input').value = '';
-      // Re-fetch the member data to show the new replay
-      setTimeout(async function() {
-        var res2  = await fetch(SCRIPT + '?action=sendOTP&email=' + enc(member.email));
-        // We just need fresh replays — re-login silently by re-verifying is complex,
-        // so instead reload the page which will restore from sessionStorage after re-login
-        // Simpler: fetch replays via a dedicated refresh
-        refreshReplays(member.email);
-      }, 1000);
-    } else if (json.status === 'invalid_code') {
-      errEl.textContent = '❌ Code not recognised. Please check and try again.';
-      errEl.style.display = 'block';
+      setTimeout(function() {
+        progressEl.style.display = 'none';
+        progressBar.style.width = '0%';
+        uploadBtn.className = 'btn-assignment btn-submitted';
+        uploadBtn.textContent = '✓ Submitted';
+        uploadBtn.disabled = true;
+      }, 400);
     } else {
-      errEl.textContent = 'Something went wrong: ' + (json.message || 'Unknown error');
-      errEl.style.display = 'block';
+      throw new Error(json.message || 'Upload failed');
     }
   } catch(e) {
-    errEl.textContent = 'Connection error. Please try again.';
+    clearInterval(progressTimer);
+    progressEl.style.display = 'none';
+    progressBar.style.width = '0%';
+    uploadBtn.className = 'btn-assignment btn-upload';
+    uploadBtn.textContent = '⬆ Upload Submission';
+    uploadBtn.disabled = false;
+    errEl.textContent = 'Upload failed: ' + e.message + '. Please try again.';
     errEl.style.display = 'block';
   }
 
-  btn.disabled = false; btn.innerHTML = 'Unlock →';
+  // Reset file input so same file can be re-selected
+  input.value = '';
 }
 
-async function refreshReplays(email) {
+function readFileAsBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload  = function(e) { resolve(e.target.result.split(',')[1]); };
+    reader.onerror = function()  { reject(new Error('Could not read file')); };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function checkSubmissionStatus(idx, lectureId) {
+  if (!memberEmail || !SCRIPT) return;
   try {
-    var res  = await fetch(SCRIPT + '?action=getReplays&email=' + enc(email));
+    var res  = await fetch(SCRIPT + '?action=getSubmission&email=' + enc(memberEmail) + '&lectureId=' + enc(lectureId));
     var json = await res.json();
-    if (json.status === 'ok') {
-      // Update session and re-render replays
-      var saved  = JSON.parse(sessionStorage.getItem(SESSION_KEY));
-      saved.replays = json.replays;
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(saved));
-      renderReplays(json.replays);
-      // Update stats
-      var now      = Date.now();
-      var active   = json.replays.filter(function(r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
-      var expiring = active.filter(function(r) { return r.expiryDate && (new Date(r.expiryDate) - now) < 30*86400000; });
-      document.getElementById('stat-total').textContent    = json.replays.length;
-      document.getElementById('stat-active').textContent   = active.length;
-      document.getElementById('stat-expiring').textContent = expiring.length;
-      document.getElementById('hero-sub').textContent = json.replays.length
-        ? 'You have ' + json.replays.length + ' replay' + (json.replays.length !== 1 ? 's' : '') + ' in your library.'
-        : 'Your replays will appear here after attending a lecture.';
-      // Close panel
-      document.getElementById('redeem-panel').classList.remove('open');
-      document.getElementById('redeem-toggle-btn').classList.remove('open');
+    if (json.status === 'ok' && json.submitted) {
+      var btn = document.getElementById('upload-btn-' + idx);
+      if (btn) {
+        btn.className = 'btn-assignment btn-submitted';
+        btn.textContent = '✓ Submitted';
+        btn.disabled = true;
+      }
     }
-  } catch(e) {
-    document.getElementById('redeem-info').textContent = '✅ Code redeemed! Sign out and sign back in to see your new replay.';
-  }
+  } catch(e) { /* silent fail — non-critical */ }
 }
 
-// ── VIDEO MODAL ───────────────────────────────────────
-function getYouTubeEmbedUrl(url) {
-  // Handles: youtu.be/ID, youtube.com/watch?v=ID, youtube.com/embed/ID
-  var match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
-  return match ? 'https://www.youtube.com/embed/' + match[1] + '?autoplay=1&rel=0' : null;
-}
-
-function openVideoModal(url, title) {
-  var embedUrl = getYouTubeEmbedUrl(url);
-  if (!embedUrl) { window.open(url, '_blank'); return; } // fallback for non-YouTube
-  document.getElementById('video-modal-title').textContent = title || 'Lecture Replay';
-  document.getElementById('video-modal-iframe').src = embedUrl;
-  document.getElementById('video-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeVideoModal(e) {
-  // Close only if clicking the backdrop itself, or the ✕ button (no event = button click)
-  if (e && e.target !== document.getElementById('video-modal')) return;
-  document.getElementById('video-modal-iframe').src = ''; // stops video
-  document.getElementById('video-modal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-// Close on Escape key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeVideoModal();
-});
-
-// ── SIGN OUT ──────────────────────────────────────────
+// ─── SIGN OUT ────────────────────────────────────────────────
 function signOut() {
   sessionStorage.removeItem(SESSION_KEY);
+  memberEmail = '';
   showScreen('screen-register');
 }
 
-// ── HELPERS ───────────────────────────────────────────
+// ─── HELPERS ─────────────────────────────────────────────────
 function enc(str) { return encodeURIComponent(str || ''); }
-function esc(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 </body>
 </html>
