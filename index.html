@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Dashboard — Lecture Series</title>
+  <title>My Dashboard — FO Lectures</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -105,8 +105,9 @@
     @keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     .replay-card:hover { border-color: #3a3a3a; }
     .replay-thumb { position: relative; aspect-ratio: 16/9; background: #1a1a1a; overflow: hidden; cursor: pointer; flex-shrink: 0; }
-    .thumb-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; color: rgba(255,255,255,.06); text-align: center; padding: 1rem; line-height: 1.2; }
-    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(192,24,26,.1) 0%, rgba(0,0,0,.45) 100%); }
+    .thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; color: rgba(255,255,255,.12); text-align: center; padding: 1rem; line-height: 1.2; }
+    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 100%); }
     .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 50px; height: 50px; background: rgba(192,24,26,.88); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 4px 18px rgba(192,24,26,.5); }
     .play-btn svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
     .replay-card:hover .play-btn { transform: translate(-50%,-50%) scale(1.1); }
@@ -514,6 +515,28 @@ function startCountdown() {
 
 // ─── VIDEO MODAL ─────────────────────────────────────────────
 /**
+ * Extracts YouTube video ID and returns the hqdefault thumbnail URL.
+ * Returns null if not a YouTube URL.
+ */
+function getYouTubeThumbnail(url) {
+  if (!url) return null;
+  try {
+    var u = new URL(url);
+    var videoId = null;
+    if (u.hostname === 'youtu.be') {
+      videoId = u.pathname.replace('/', '');
+    } else if (u.hostname.includes('youtube.com')) {
+      videoId = u.searchParams.get('v');
+      if (!videoId) {
+        var m = u.pathname.match(/\/(live|shorts|embed)\/([^/?&]+)/);
+        if (m) videoId = m[2];
+      }
+    }
+    return videoId ? 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg' : null;
+  } catch(e) { return null; }
+}
+
+/**
  * Converts any YouTube URL to an embed URL.
  * Handles: youtube.com/watch?v=ID, youtu.be/ID,
  *          youtube.com/live/ID, youtube.com/shorts/ID
@@ -599,7 +622,7 @@ function renderUpcoming(u) {
     + (u.description ? '<p class="upcoming-desc">' + esc(u.description) + '</p>' : '')
     + '<div class="upcoming-actions">'
     + (u.registerUrl ? '<a class="btn-register" href="' + esc(u.registerUrl) + '" target="_blank">Register Now →</a>' : '')
-    + '<a class="btn-refer" href="refer.html">👥 Refer a Friend</a>'
+    + '<a class="btn-refer" href="index.html">👥 Refer a Friend</a>'
     + '</div></div>';
 }
 
@@ -640,7 +663,13 @@ function renderReplays(replays) {
       ? 'openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ')'
       : '';
 
-    // ── FIX 2: Assignment section ──
+    // Auto YouTube thumbnail — hqdefault, falls back to mqdefault if missing
+    var ytThumb = getYouTubeThumbnail(r.videoUrl);
+    var thumbImgHtml = ytThumb
+      ? '<img class="thumb-img" src="' + ytThumb + '" alt="' + esc(r.title) + '" loading="lazy" onerror="this.src=this.src.replace(\'hqdefault\',\'mqdefault\');this.onerror=function(){this.style.display=\'none\';}"/>'
+      : '';
+
+    // Assignment section
     var assignmentHtml = '';
     if (r.assignmentUrl && !expired) {
       assignmentHtml =
@@ -659,7 +688,8 @@ function renderReplays(replays) {
     html +=
       '<div class="replay-card">'
       + '<div class="replay-thumb"' + (thumbClick ? ' onclick="' + thumbClick + '" style="cursor:pointer"' : '') + '>'
-      + '<div class="thumb-text">' + esc(r.title).toUpperCase() + '</div>'
+      + thumbImgHtml
+      + '<div class="thumb-fallback">' + esc(r.title).toUpperCase() + '</div>'
       + '<div class="thumb-overlay"></div>'
       + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
       + (!expired && r.videoUrl ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
