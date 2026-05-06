@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My Dashboard — FO Lectures</title>
+  <title>My Dashboard — Lecture Series</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Anybody:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -125,10 +125,65 @@
     .expiry-note { font-size: .74rem; color: var(--text-dim); }
     .expiry-note.soon { color: var(--gold); font-weight: 600; }
     .expiry-note.expired { color: var(--red); }
-    .watch-link { display: inline-flex; align-items: center; gap: .3rem; color: var(--red); font-size: .8rem; font-weight: 700; text-decoration: none; transition: gap .2s; }
-    .watch-link:hover { gap: .5rem; }
-    .watch-link svg { width: 11px; height: 11px; fill: currentColor; }
-    .watch-link.dim { color: var(--text-dim); pointer-events: none; }
+
+    /* ── WATCH BUTTON (replaces plain link) ── */
+    .watch-btn {
+      display: inline-flex; align-items: center; gap: .3rem;
+      background: none; border: none; padding: 0;
+      color: var(--red); font-family: 'Anybody', sans-serif;
+      font-size: .8rem; font-weight: 700; cursor: pointer;
+      transition: gap .2s;
+    }
+    .watch-btn:hover { gap: .5rem; }
+    .watch-btn svg { width: 11px; height: 11px; fill: currentColor; }
+    .watch-btn.dim { color: var(--text-dim); pointer-events: none; cursor: default; }
+
+    /* ── VIDEO MODAL ── */
+    .video-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.92);
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+      animation: fadeIn .2s ease;
+    }
+    .video-modal.open { display: flex; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    .video-modal-inner {
+      width: 100%; max-width: 900px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,.8);
+      animation: slideUp .25s ease;
+    }
+    @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .video-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .9rem 1.2rem; border-bottom: 1px solid var(--border);
+    }
+    .video-modal-title {
+      font-family: 'Anton', sans-serif; font-style: italic;
+      font-size: 1.1rem; font-weight: 400;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: calc(100% - 3rem);
+    }
+    .video-modal-close {
+      background: none; border: none; color: var(--text-dim);
+      font-size: 1.4rem; cursor: pointer; line-height: 1;
+      padding: .1rem .3rem; transition: color .2s;
+      flex-shrink: 0;
+    }
+    .video-modal-close:hover { color: var(--red); }
+    .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; }
+    .video-modal-body iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: none;
+    }
+    .video-modal-footer {
+      padding: .7rem 1.2rem; display: flex; align-items: center;
+      justify-content: flex-end; gap: .8rem;
+    }
+    .video-modal-footer { display: none; }
 
     /* ── ASSIGNMENT SECTION ── */
     .assignment-section {
@@ -143,44 +198,21 @@
     }
     .assignment-label::before { content: '📝'; font-size: .8rem; }
     .assignment-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
-
     .btn-assignment {
       display: inline-flex; align-items: center; gap: .4rem;
       border: none; border-radius: 6px; padding: .5rem 1rem;
       font-family: 'Anybody', sans-serif; font-size: .8rem; font-weight: 700;
       cursor: pointer; transition: all .2s; text-decoration: none; white-space: nowrap;
     }
-    .btn-get {
-      background: rgba(201,147,58,.12); color: var(--gold);
-      border: 1px solid rgba(201,147,58,.25);
-    }
+    .btn-get { background: rgba(201,147,58,.12); color: var(--gold); border: 1px solid rgba(201,147,58,.25); }
     .btn-get:hover { background: rgba(201,147,58,.2); }
-    .btn-upload {
-      background: rgba(192,24,26,.1); color: #f87171;
-      border: 1px solid rgba(192,24,26,.25);
-    }
+    .btn-upload { background: rgba(192,24,26,.1); color: #f87171; border: 1px solid rgba(192,24,26,.25); }
     .btn-upload:hover { background: rgba(192,24,26,.18); }
-    .btn-submitted {
-      background: var(--green-light); color: #6ee7a0;
-      border: 1px solid rgba(30,104,64,.3); cursor: default;
-    }
-    .btn-uploading {
-      background: rgba(255,255,255,.05); color: var(--text-dim);
-      border: 1px solid var(--border); cursor: not-allowed;
-    }
-
-    /* Hidden file input */
+    .btn-submitted { background: var(--green-light); color: #6ee7a0; border: 1px solid rgba(30,104,64,.3); cursor: default; }
+    .btn-uploading { background: rgba(255,255,255,.05); color: var(--text-dim); border: 1px solid var(--border); cursor: not-allowed; }
     .file-input { display: none; }
-
-    /* Upload progress */
-    .upload-progress {
-      margin-top: .6rem; height: 3px; background: var(--border);
-      border-radius: 2px; overflow: hidden; display: none;
-    }
-    .upload-progress-bar {
-      height: 100%; background: var(--red); width: 0%;
-      transition: width .3s; border-radius: 2px;
-    }
+    .upload-progress { margin-top: .6rem; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; display: none; }
+    .upload-progress-bar { height: 100%; background: var(--red); width: 0%; transition: width .3s; border-radius: 2px; }
     .upload-err { font-size: .75rem; color: #f87171; margin-top: .5rem; display: none; }
 
     /* ── MISC ── */
@@ -195,6 +227,8 @@
       .dash-main { padding: 1.8rem 1rem 4rem; }
       .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
       .replay-grid { grid-template-columns: 1fr; }
+      .video-modal { padding: .5rem; }
+      .video-modal-inner { border-radius: 10px; }
     }
   </style>
 </head>
@@ -299,6 +333,25 @@
   </main>
 </div>
 
+<!-- ════════ VIDEO MODAL ════════ -->
+<div class="video-modal" id="video-modal" onclick="closeVideoModal(event)">
+  <div class="video-modal-inner" onclick="event.stopPropagation()">
+    <div class="video-modal-header">
+      <div class="video-modal-title" id="modal-title">—</div>
+      <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
+    </div>
+    <div class="video-modal-body">
+      <iframe id="modal-iframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="video-modal-footer">
+      <a id="modal-yt-link" class="btn-open-yt" href="#" target="_blank" rel="noopener">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Open in YouTube
+      </a>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script>
 var SCRIPT      = (typeof GOOGLE_SCRIPT_URL !== 'undefined') ? GOOGLE_SCRIPT_URL : '';
@@ -312,6 +365,11 @@ window.addEventListener('DOMContentLoaded', function() {
   var saved = sessionStorage.getItem(SESSION_KEY);
   if (saved) { try { var m = JSON.parse(saved); memberEmail = m.email; renderDashboard(m); return; } catch(e) {} }
   showScreen('screen-register');
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeVideoModal();
 });
 
 // ─── SCREEN HELPERS ──────────────────────────────────────────
@@ -454,6 +512,54 @@ function startCountdown() {
   }, 1000);
 }
 
+// ─── VIDEO MODAL ─────────────────────────────────────────────
+/**
+ * Converts any YouTube URL to an embed URL.
+ * Handles: youtube.com/watch?v=ID, youtu.be/ID,
+ *          youtube.com/live/ID, youtube.com/shorts/ID
+ * Returns the original URL unchanged if not recognised as YouTube.
+ */
+function toYouTubeEmbed(url) {
+  try {
+    var u = new URL(url);
+    var videoId = null;
+
+    if (u.hostname === 'youtu.be') {
+      videoId = u.pathname.replace('/', '');
+    } else if (u.hostname.includes('youtube.com')) {
+      if (u.searchParams.get('v')) {
+        videoId = u.searchParams.get('v');
+      } else {
+        // /live/ID  or  /shorts/ID  or  /embed/ID
+        var m = u.pathname.match(/\/(live|shorts|embed)\/([^/?&]+)/);
+        if (m) videoId = m[2];
+      }
+    }
+
+    if (videoId) {
+      return 'https://www.youtube.com/embed/' + videoId + '?autoplay=1&rel=0&modestbranding=1';
+    }
+  } catch(e) {}
+  // Not a YouTube URL — return as-is (e.g. Vimeo, direct MP4, etc.)
+  return url;
+}
+
+function openVideoModal(videoUrl, title) {
+  var embedUrl = toYouTubeEmbed(videoUrl);
+  document.getElementById('modal-title').textContent = title || 'Lecture Replay';
+  document.getElementById('modal-iframe').src = embedUrl;
+  document.getElementById('modal-yt-link').href = videoUrl;
+  document.getElementById('video-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideoModal(e) {
+  // If called from backdrop click, e is the event; we already stopPropagation on inner
+  document.getElementById('video-modal').classList.remove('open');
+  document.getElementById('modal-iframe').src = ''; // stops video playback
+  document.body.style.overflow = '';
+}
+
 // ─── DASHBOARD RENDER ────────────────────────────────────────
 function renderDashboard(member) {
   showScreen('dashboard-screen');
@@ -522,13 +628,19 @@ function renderReplays(replays) {
         ? '<span class="expiry-note' + (soon ? ' soon' : '') + '">Expires ' + expDate.toLocaleDateString('en-NG') + '</span>'
         : '<span class="expiry-note">—</span>';
 
+    // ── FIX 1: Watch button opens in-page modal (not external tab) ──
     var watchBtn = expired
-      ? '<span class="watch-link dim">Expired</span>'
+      ? '<span class="watch-btn dim">Expired</span>'
       : r.videoUrl
-        ? '<a class="watch-link" href="' + esc(r.videoUrl) + '" target="_blank" rel="noopener">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></a>'
-        : '<span class="watch-link dim">Coming soon</span>';
+        ? '<button class="watch-btn" onclick="openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ')">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>'
+        : '<span class="watch-btn dim">Coming soon</span>';
 
-    // Assignment section
+    // Thumbnail click also opens modal
+    var thumbClick = (!expired && r.videoUrl)
+      ? 'openVideoModal(' + JSON.stringify(r.videoUrl) + ',' + JSON.stringify(r.title) + ')'
+      : '';
+
+    // ── FIX 2: Assignment section ──
     var assignmentHtml = '';
     if (r.assignmentUrl && !expired) {
       assignmentHtml =
@@ -537,7 +649,7 @@ function renderReplays(replays) {
         + '<div class="assignment-actions">'
         + '<a class="btn-assignment btn-get" href="' + esc(r.assignmentUrl) + '" target="_blank" rel="noopener">📥 Get Assignment</a>'
         + '<button class="btn-assignment btn-upload" onclick="triggerUpload(' + idx + ')" id="upload-btn-' + idx + '">⬆ Upload Submission</button>'
-        + '<input type="file" class="file-input" id="file-input-' + idx + '" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileUpload(this,' + idx + ',\'' + r.lectureId + '\')" />'
+        + '<input type="file" class="file-input" id="file-input-' + idx + '" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" onchange="handleFileUpload(this,' + idx + ',\'' + esc(r.lectureId) + '\')" />'
         + '</div>'
         + '<div class="upload-progress" id="progress-' + idx + '"><div class="upload-progress-bar" id="progress-bar-' + idx + '"></div></div>'
         + '<div class="upload-err" id="upload-err-' + idx + '"></div>'
@@ -546,11 +658,11 @@ function renderReplays(replays) {
 
     html +=
       '<div class="replay-card">'
-      + '<div class="replay-thumb" onclick="' + (!expired && r.videoUrl ? 'window.open(\'' + esc(r.videoUrl) + '\',\'_blank\')' : '') + '">'
+      + '<div class="replay-thumb"' + (thumbClick ? ' onclick="' + thumbClick + '" style="cursor:pointer"' : '') + '>'
       + '<div class="thumb-text">' + esc(r.title).toUpperCase() + '</div>'
       + '<div class="thumb-overlay"></div>'
       + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
-      + (!expired ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
+      + (!expired && r.videoUrl ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
       + (r.duration ? '<span class="duration-tag">' + esc(r.duration) + '</span>' : '')
       + '</div>'
       + '<div class="replay-body">'
@@ -566,9 +678,11 @@ function renderReplays(replays) {
   html += '</div>';
   container.innerHTML = html;
 
-  // Check submission status for each replay with an assignment
+  // ── FIX 3: Correct operator precedence for submission status check ──
+  // Old (broken): if (!r.assignmentUrl && !r.expiryDate || ...)
+  // New (correct): if (r.assignmentUrl && (!r.expiryDate || ...))
   replays.forEach(function(r, idx) {
-    if (r.assignmentUrl && !r.expiryDate || (r.assignmentUrl && new Date(r.expiryDate) > now)) {
+    if (r.assignmentUrl && (!r.expiryDate || new Date(r.expiryDate) > now)) {
       checkSubmissionStatus(idx, r.lectureId);
     }
   });
@@ -583,12 +697,11 @@ async function handleFileUpload(input, idx, lectureId) {
   var file    = input.files[0];
   if (!file) return;
 
-  var uploadBtn = document.getElementById('upload-btn-' + idx);
+  var uploadBtn  = document.getElementById('upload-btn-' + idx);
   var progressEl = document.getElementById('progress-' + idx);
   var progressBar= document.getElementById('progress-bar-' + idx);
-  var errEl   = document.getElementById('upload-err-' + idx);
+  var errEl      = document.getElementById('upload-err-' + idx);
 
-  // Max 10MB
   if (file.size > 10 * 1024 * 1024) {
     errEl.textContent = 'File too large. Maximum size is 10MB.';
     errEl.style.display = 'block'; return;
@@ -600,7 +713,6 @@ async function handleFileUpload(input, idx, lectureId) {
   uploadBtn.disabled = true;
   progressEl.style.display = 'block';
 
-  // Animate progress bar (fake smooth progress while uploading)
   var pct = 0;
   var progressTimer = setInterval(function() {
     pct = Math.min(pct + 3, 85);
@@ -608,7 +720,6 @@ async function handleFileUpload(input, idx, lectureId) {
   }, 100);
 
   try {
-    // Read file as base64
     var base64 = await readFileAsBase64(file);
 
     var formData = new URLSearchParams();
@@ -647,7 +758,6 @@ async function handleFileUpload(input, idx, lectureId) {
     errEl.style.display = 'block';
   }
 
-  // Reset file input so same file can be re-selected
   input.value = '';
 }
 
@@ -673,7 +783,7 @@ async function checkSubmissionStatus(idx, lectureId) {
         btn.disabled = true;
       }
     }
-  } catch(e) { /* silent fail — non-critical */ }
+  } catch(e) { /* silent fail */ }
 }
 
 // ─── SIGN OUT ────────────────────────────────────────────────
