@@ -18,7 +18,7 @@
 
     /* ── LOGIN ── */
     #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; background: var(--ink); }
-    .login-card { background: var(--card); border-radius: 14px; padding: 2.4rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.5); border-top: 4px solid var(--red); position: relative; }
+    .login-card { background: var(--card); border-radius: 14px; padding: 2.4rem 2rem; width: 100%; max-width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,.5); border-top: 4px solid var(--red); }
     .login-card .lock { font-size: 2rem; margin-bottom: 1rem; }
     .login-card h2 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.7rem; font-weight: 400; margin-bottom: .3rem; }
     .login-card p { font-size: .88rem; color: var(--muted); margin-bottom: 1.8rem; }
@@ -41,8 +41,8 @@
     .header-actions { display: flex; gap: .6rem; flex-wrap: wrap; }
 
     /* ── NAV TABS ── */
-    .admin-tabs { background: #111; border-bottom: 1px solid #222; padding: 0 2rem; display: flex; gap: 0; }
-    .admin-tab { background: none; border: none; color: #777; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 600; padding: .9rem 1.2rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; letter-spacing: .03em; }
+    .admin-tabs { background: #111; border-bottom: 1px solid #222; padding: 0 2rem; display: flex; gap: 0; overflow-x: auto; }
+    .admin-tab { background: none; border: none; color: #777; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 600; padding: .9rem 1.2rem; cursor: pointer; border-bottom: 3px solid transparent; transition: all .2s; letter-spacing: .03em; white-space: nowrap; }
     .admin-tab:hover { color: #ccc; }
     .admin-tab.active { color: #fff; border-bottom-color: var(--red); }
 
@@ -93,7 +93,7 @@
     .hidden { display: none !important; }
     @media (max-width: 600px) {
       header { padding: 1rem; }
-      .admin-tabs { padding: 0 1rem; overflow-x: auto; }
+      .admin-tabs { padding: 0 1rem; }
       main { padding: 1.5rem 1rem; }
     }
   </style>
@@ -132,6 +132,7 @@
     <button class="admin-tab active" onclick="switchTab('members')">👥 Members</button>
     <button class="admin-tab" onclick="switchTab('access')">🎬 Replay Access</button>
     <button class="admin-tab" onclick="switchTab('submissions')">📝 Submissions</button>
+    <button class="admin-tab" onclick="switchTab('referrals')">🔗 Referrals</button>
   </div>
 
   <main>
@@ -140,8 +141,9 @@
     <div class="tab-panel active" id="tab-members">
       <div class="stats" id="member-stats">
         <div class="stat-card"><div class="stat-label">Total Members</div><div class="stat-value" id="s-members">—</div><div class="stat-sub">registered accounts</div></div>
-        <div class="stat-card"><div class="stat-label">Total Replays Granted</div><div class="stat-value" id="s-access">—</div><div class="stat-sub">across all members</div></div>
+        <div class="stat-card"><div class="stat-label">Replays Granted</div><div class="stat-value" id="s-access">—</div><div class="stat-sub">across all members</div></div>
         <div class="stat-card"><div class="stat-label">Submissions</div><div class="stat-value" id="s-submissions">—</div><div class="stat-sub">assignments uploaded</div></div>
+        <div class="stat-card"><div class="stat-label">Referrals</div><div class="stat-value" id="s-referrals">—</div><div class="stat-sub">people referred</div></div>
       </div>
 
       <div class="toolbar">
@@ -220,6 +222,31 @@
       </div>
     </div>
 
+    <!-- ══ TAB: REFERRALS ══ -->
+    <div class="tab-panel" id="tab-referrals">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="search" id="ref-search" placeholder="Search by name or email…" oninput="renderReferrals()"/>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-head">
+          <h2>Referrals</h2>
+          <span class="count" id="ref-count"></span>
+        </div>
+        <div class="table-wrap">
+          <div class="loading-state" id="ref-loading"><div class="loader"></div></div>
+          <table id="ref-table" class="hidden">
+            <thead><tr><th>#</th><th>Date</th><th>Referred By</th><th>Referrer Email</th><th>Referee Name</th><th>Referee Email</th><th>Referee Phone</th></tr></thead>
+            <tbody id="ref-tbody"></tbody>
+          </table>
+          <div class="empty-state hidden" id="ref-empty"><div class="icon">🔗</div><p>No referrals yet.</p></div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -231,6 +258,7 @@ var SCRIPT         = (typeof GOOGLE_SCRIPT_URL !== 'undefined') ? GOOGLE_SCRIPT_
 var allMembers     = [];
 var allAccess      = [];
 var allSubmissions = [];
+var allReferrals   = [];
 var activeTab      = 'members';
 
 // ── AUTH ──────────────────────────────────────────────────────
@@ -252,10 +280,11 @@ function logout() {
 }
 
 // ── TABS ──────────────────────────────────────────────────────
+var TAB_NAMES = ['members', 'access', 'submissions', 'referrals'];
 function switchTab(tab) {
   activeTab = tab;
   document.querySelectorAll('.admin-tab').forEach(function(b, i) {
-    b.classList.toggle('active', ['members','access','submissions'][i] === tab);
+    b.classList.toggle('active', TAB_NAMES[i] === tab);
   });
   document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('tab-' + tab).classList.add('active');
@@ -264,34 +293,39 @@ function switchTab(tab) {
 // ── LOAD DATA ─────────────────────────────────────────────────
 async function loadAll() {
   document.getElementById('header-sub').textContent = 'Loading…';
-  if (!SCRIPT) { loadFromLocal(); return; }
+
+  if (!SCRIPT) {
+    alert('GOOGLE_SCRIPT_URL not set in config.js');
+    return;
+  }
+
   try {
     var res  = await fetch(SCRIPT + '?action=adminData');
     var json = await res.json();
+
     if (json.status === 'ok') {
       allMembers     = json.members     || [];
       allAccess      = json.access      || [];
       allSubmissions = json.submissions || [];
-    } else { loadFromLocal(); }
-  } catch(e) { loadFromLocal(); }
+      allReferrals   = json.referrals   || [];
+    } else {
+      console.error('adminData error:', json.message);
+    }
+  } catch(e) {
+    console.error('Failed to load admin data:', e);
+    alert('Could not load data. Check your GOOGLE_SCRIPT_URL in config.js and make sure the script is deployed as a web app.');
+    return;
+  }
 
   updateStats();
   renderMembers();
   renderAccess();
   renderSubmissions();
+  renderReferrals();
   populateLectureFilter();
 
   var now = new Date().toLocaleTimeString('en-NG', { timeZone: 'Africa/Lagos' });
   document.getElementById('header-sub').textContent = 'Last refreshed: ' + now;
-}
-
-function loadFromLocal() {
-  // Fallback: load from localStorage (index.html referral data)
-  var stored = JSON.parse(localStorage.getItem('lectureReferrals') || '[]');
-  allMembers = []; allAccess = []; allSubmissions = [];
-  stored.forEach(function(entry) {
-    allMembers.push({ email: entry.participant, name: entry.participant, phone: '', dateAdded: entry.timestamp, source: 'local' });
-  });
 }
 
 // ── STATS ─────────────────────────────────────────────────────
@@ -299,19 +333,19 @@ function updateStats() {
   document.getElementById('s-members').textContent     = allMembers.length;
   document.getElementById('s-access').textContent      = allAccess.length;
   document.getElementById('s-submissions').textContent = allSubmissions.length;
+  document.getElementById('s-referrals').textContent   = allReferrals.length;
 }
 
 // ── MEMBERS TABLE ─────────────────────────────────────────────
 function renderMembers() {
   var q    = (document.getElementById('member-search').value || '').toLowerCase().trim();
   var rows = allMembers.filter(function(m) {
-    return !q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || (m.phone||'').includes(q);
+    return !q || (m.name||'').toLowerCase().includes(q) || (m.email||'').toLowerCase().includes(q) || (m.phone||'').includes(q);
   });
 
   showTable('members', rows.length);
   if (!rows.length) return;
 
-  // Count replays per member
   var replayCount = {};
   allAccess.forEach(function(a) { replayCount[a.email] = (replayCount[a.email] || 0) + 1; });
 
@@ -334,7 +368,7 @@ function renderAccess() {
   var q    = (document.getElementById('access-search').value || '').toLowerCase().trim();
   var now  = Date.now();
   var rows = allAccess.filter(function(a) {
-    return !q || a.email.toLowerCase().includes(q) || (a.lectureId||'').toLowerCase().includes(q);
+    return !q || (a.email||'').toLowerCase().includes(q) || (a.lectureId||'').toLowerCase().includes(q);
   });
 
   showTable('access', rows.length);
@@ -366,7 +400,7 @@ function renderSubmissions() {
   var q       = (document.getElementById('sub-search').value || '').toLowerCase().trim();
   var lecture = document.getElementById('sub-filter-lecture').value;
   var rows    = allSubmissions.filter(function(s) {
-    var matchQ = !q || s.email.toLowerCase().includes(q) || (s.lectureId||'').toLowerCase().includes(q);
+    var matchQ = !q || (s.email||'').toLowerCase().includes(q) || (s.lectureId||'').toLowerCase().includes(q);
     var matchL = !lecture || s.lectureId === lecture;
     return matchQ && matchL;
   });
@@ -387,6 +421,34 @@ function renderSubmissions() {
   }).join('');
 }
 
+// ── REFERRALS TABLE ───────────────────────────────────────────
+function renderReferrals() {
+  var q    = (document.getElementById('ref-search').value || '').toLowerCase().trim();
+  var rows = allReferrals.filter(function(r) {
+    return !q
+      || (r.referrerName  ||'').toLowerCase().includes(q)
+      || (r.referrerEmail ||'').toLowerCase().includes(q)
+      || (r.refereeName   ||'').toLowerCase().includes(q)
+      || (r.refereeEmail  ||'').toLowerCase().includes(q);
+  });
+
+  showTable('ref', rows.length);
+  if (!rows.length) return;
+
+  document.getElementById('ref-count').textContent = rows.length + ' referral' + (rows.length !== 1 ? 's' : '');
+  document.getElementById('ref-tbody').innerHTML = rows.map(function(r, i) {
+    return '<tr>'
+      + '<td><span class="tag">' + (i+1) + '</span></td>'
+      + '<td class="dim">' + esc(r.timestamp || '—') + '</td>'
+      + '<td class="name-cell">' + esc(r.referrerName || '—') + '</td>'
+      + '<td>' + esc(r.referrerEmail || '—') + '</td>'
+      + '<td class="name-cell">' + esc(r.refereeName || '—') + '</td>'
+      + '<td>' + esc(r.refereeEmail || '—') + '</td>'
+      + '<td>' + esc(r.refereePhone || '—') + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
 function populateLectureFilter() {
   var ids = [...new Set(allSubmissions.map(function(s) { return s.lectureId; }))].sort();
   var sel = document.getElementById('sub-filter-lecture');
@@ -397,9 +459,8 @@ function populateLectureFilter() {
 // ── TABLE STATE HELPER ────────────────────────────────────────
 function showTable(prefix, count) {
   var loading = document.getElementById(prefix + '-loading');
-  var table   = document.getElementById(prefix + '-table') || document.getElementById(prefix === 'sub' ? 'sub-table' : prefix + '-table');
+  var table   = document.getElementById(prefix + '-table');
   var empty   = document.getElementById(prefix + '-empty');
-
   if (loading) loading.style.display = 'none';
   if (table)   table.classList.toggle('hidden', count === 0);
   if (empty)   empty.classList.toggle('hidden', count !== 0);
@@ -418,14 +479,20 @@ function exportCSV() {
     headers  = ['#','Email','LectureID','GrantedDate','ExpiryDate'];
     data = allAccess.map(function(a,i) { return [i+1, a.email, a.lectureId, a.grantedDate||'', a.expiryDate||'']; });
     filename = 'access.csv';
-  } else {
+  } else if (activeTab === 'submissions') {
     headers  = ['#','Email','LectureID','FileName','SubmittedAt','FileURL'];
     data = allSubmissions.map(function(s,i) { return [i+1, s.email, s.lectureId, s.fileName||'', s.submittedAt||'', s.fileUrl||'']; });
     filename = 'submissions.csv';
+  } else {
+    headers  = ['#','Date','ReferrerName','ReferrerEmail','RefereeName','RefereeEmail','RefereePhone'];
+    data = allReferrals.map(function(r,i) { return [i+1, r.timestamp||'', r.referrerName||'', r.referrerEmail||'', r.refereeName||'', r.refereeEmail||'', r.refereePhone||'']; });
+    filename = 'referrals.csv';
   }
 
   if (!data.length) { alert('No data to export.'); return; }
-  var lines = [headers.join(',')].concat(data.map(function(r) { return r.map(function(c) { return '"' + String(c).replace(/"/g,'""') + '"'; }).join(','); }));
+  var lines = [headers.join(',')].concat(data.map(function(r) {
+    return r.map(function(c) { return '"' + String(c).replace(/"/g,'""') + '"'; }).join(',');
+  }));
   var blob  = new Blob([lines.join('\n')], { type: 'text/csv' });
   var a     = document.createElement('a');
   a.href    = URL.createObjectURL(blob);
