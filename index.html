@@ -560,7 +560,7 @@ function toYouTubeEmbed(url) {
     }
 
     if (videoId) {
-      return 'https://www.youtube.com/embed/' + videoId + 'autoplay=1&';
+      return 'https://www.youtube.com/embed/' + videoId + '?autoplay=1';
     }
   } catch(e) {}
   // Not a YouTube URL — return as-is (e.g. Vimeo, direct MP4, etc.)
