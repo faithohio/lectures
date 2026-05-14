@@ -178,10 +178,7 @@
     .video-modal-close:hover { color: var(--red); }
     .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; }
     .video-modal-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-    .video-modal-footer { padding: .7rem 1.2rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-    .modal-hint { font-size: .78rem; color: var(--text-dim); }
-    .btn-open-yt { display: inline-flex; align-items: center; gap: .4rem; color: var(--red); font-family: 'Anybody', sans-serif; font-size: .82rem; font-weight: 700; text-decoration: none; transition: opacity .2s; }
-    .btn-open-yt:hover { opacity: .8; }
+    .video-modal-footer { display: none; }
 
     /* ── ASSIGNMENT SECTION ── */
     .assignment-section { border-top: 1px solid var(--border); padding: 1rem 1.15rem; background: rgba(255,255,255,.02); }
@@ -356,8 +353,9 @@
       <!-- FIX: removed referrerpolicy attr — it was stripping the referrer YouTube needs.
            allow="autoplay" added; no origin= param in embed URL (causes blocks on file:// / unknown domains) -->
       <iframe id="modal-iframe" src=""
-        allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen></iframe>
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-forms"></iframe>
     </div>
     <div class="video-modal-footer">
       <span class="modal-hint">Video not loading? Open directly on YouTube →</span>
@@ -742,12 +740,16 @@ function extractYouTubeId(url) {
 function toYouTubeEmbed(url) {
   var videoId = extractYouTubeId(url);
   if (videoId) {
-    // FIX (video): NO origin= param — it causes YouTube to block embeds
-    // on file://, localhost, or any domain not registered in the YouTube console.
-    // enablejsapi=0 avoids extra permission requirements.
-    return 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&enablejsapi=0';
+    // Uses youtube-nocookie.com — privacy-enhanced mode, no YouTube cookies or branding leakage
+    // autoplay=1 so video starts immediately when modal opens
+    // rel=0 prevents related videos showing at the end
+    // modestbranding=1 hides the YouTube logo during playback
+    // iv_load_policy=3 hides video annotations
+    // controls=1 keeps playback controls visible
+    return 'https://www.youtube-nocookie.com/embed/' + videoId
+      + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&controls=1';
   }
-  return url; // fallback for non-YouTube URLs
+  return url;
 }
 
 function openVideoModal(videoUrl, title) {
@@ -805,12 +807,26 @@ function safeUrl(url) {
 
 function renderUpcoming(u) {
   var card = document.getElementById('upcoming-card');
+
+  // Normalise — Google Sheets sometimes returns keys with different casing
+  // or the upcoming object may be nested under a key
+  if (u && typeof u === 'object' && !u.title && !u.Title) {
+    // Try common nesting patterns
+    u = u.upcoming || u.Upcoming || u.data || u.Data || u;
+  }
+  if (u && typeof u === 'object') {
+    // Normalise keys to lowercase so Title / title / TITLE all work
+    var norm = {};
+    Object.keys(u).forEach(function(k) { norm[k.toLowerCase()] = u[k]; });
+    u = norm;
+  }
+
   if (!u || !u.title) {
     card.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem;">No upcoming lecture scheduled yet — check back soon.</div>';
     return;
   }
   card.innerHTML =
-    '<div class="upcoming-top"><h3>' + esc(u.title) + '</h3><span class="date-badge">' + esc(u.date) + '</span></div>'
+    '<div class="upcoming-top"><h3>' + esc(u.title) + '</h3><span class="date-badge">' + esc(u.date || '') + '</span></div>'
     + '<div class="upcoming-body">'
     + '<div class="upcoming-meta">'
     + (u.venue ? '<div class="meta-item">📍 <strong>' + esc(u.venue) + '</strong></div>' : '')
@@ -819,8 +835,7 @@ function renderUpcoming(u) {
     + '</div>'
     + (u.description ? '<p class="upcoming-desc">' + esc(u.description) + '</p>' : '')
     + '<div class="upcoming-actions">'
-    // FIX #3: safeUrl() validates the href before injection; also added rel="noopener noreferrer"
-    + (u.registerUrl ? '<a class="btn-register" href="' + safeUrl(u.registerUrl) + '" target="_blank" rel="noopener noreferrer">Register Now →</a>' : '')
+    + (u.registerurl || u.registerUrl ? '<a class="btn-register" href="' + safeUrl(u.registerurl || u.registerUrl) + '" target="_blank" rel="noopener noreferrer">Register Now →</a>' : '')
     + '<a class="btn-refer" href="index.html">👥 Refer a Friend</a>'
     + '</div></div>';
 }
