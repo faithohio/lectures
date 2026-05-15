@@ -19,15 +19,10 @@
     /* ── AUTH SCREENS ── */
     .auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
     .auth-wrap { width: 100%; max-width: 440px; text-align: center; }
-    .auth-eyebrow {
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25);
-      color: var(--red); font-size: .7rem; font-weight: 700; letter-spacing: .14em;
-      text-transform: uppercase; padding: .3rem .9rem; border-radius: 2px; margin-bottom: 1.5rem;
-    }
+    .auth-eyebrow { display: inline-flex; align-items: center; gap: .5rem; background: rgba(192,24,26,.1); border: 1px solid rgba(192,24,26,.25); color: var(--red); font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: .3rem .9rem; border-radius: 2px; margin-bottom: 1.5rem; }
     .dot { width: 6px; height: 6px; background: var(--red); border-radius: 50%; animation: pulse 1.6s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .auth-wrap h1 { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 400; line-height: 1.08; margin-bottom: .7rem; }
+    .auth-wrap h1 { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(2rem,7vw,3.2rem); font-weight: 400; line-height: 1.08; margin-bottom: .7rem; }
     .auth-wrap h1 em { color: var(--red); }
     .auth-wrap > p { font-size: .9rem; color: var(--text-dim); margin-bottom: 1.8rem; line-height: 1.6; font-weight: 300; }
     .auth-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.8rem; box-shadow: 0 0 50px rgba(0,0,0,.5); }
@@ -56,23 +51,39 @@
     .countdown { font-size: .78rem; color: var(--text-dim); margin-top: .8rem; }
     .countdown span { color: var(--gold); font-weight: 700; }
 
-    /* ── DASHBOARD ── */
-    #dashboard-screen { display: none; }
-    .site-header { background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(12px); }
-    .site-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--red), var(--gold), var(--red)); }
+    /* ── STICKY WRAPPER (header + theater) ── */
+    .sticky-top { position: sticky; top: 0; z-index: 100; }
+
+    /* ── HEADER ── */
+    .site-header { background: rgba(17,17,17,.96); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; backdrop-filter: blur(12px); position: relative; }
+    .site-header::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,var(--red),var(--gold),var(--red)); }
     .logo { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.35rem; font-weight: 400; }
     .logo em { color: var(--red); }
     .header-right { display: flex; align-items: center; gap: .8rem; }
     .member-pill { display: inline-flex; align-items: center; gap: .4rem; background: var(--gold-light); border: 1px solid rgba(201,147,58,.25); color: var(--gold); font-size: .72rem; font-weight: 700; letter-spacing: .07em; padding: .28rem .75rem; border-radius: 20px; text-transform: uppercase; }
     .btn-signout { background: none; border: 1px solid var(--border); color: var(--text-dim); font-family: 'Anybody', sans-serif; font-size: .78rem; padding: .32rem .75rem; border-radius: 6px; cursor: pointer; transition: all .2s; }
     .btn-signout:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── THEATER MODE ── */
+    .theater-bar { width: 100%; background: #000; overflow: hidden; height: 0; transition: height .42s cubic-bezier(.4,0,.2,1); border-bottom: 0px solid var(--border); }
+    .theater-bar.open { border-bottom-width: 2px; }
+    .theater-inner { position: relative; width: 100%; }
+    .theater-inner iframe { display: block; width: 100%; height: 100%; border: none; }
+    .theater-controls { position: absolute; bottom: 0; left: 0; right: 0; padding: 2.5rem 1.5rem .9rem; background: linear-gradient(to top,rgba(0,0,0,.88) 0%,transparent 100%); display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+    .theater-label { font-size: .64rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: .2rem; }
+    .theater-title-txt { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(.95rem,2.5vw,1.4rem); color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,.8); line-height: 1.2; max-width: calc(100% - 160px); }
+    .theater-close { background: rgba(192,24,26,.9); border: none; color: #fff; font-family: 'Anybody', sans-serif; font-size: .8rem; font-weight: 700; padding: .45rem 1rem; border-radius: 6px; cursor: pointer; transition: background .2s; white-space: nowrap; flex-shrink: 0; }
+    .theater-close:hover { background: var(--red-dark); }
+
+    /* ── DASHBOARD ── */
+    #dashboard-screen { display: none; }
     .dash-hero { background: #111; border-bottom: 1px solid var(--border); padding: 3rem 2rem 2.5rem; position: relative; overflow: hidden; }
-    .dash-hero::before { content: 'DASHBOARD'; position: absolute; top: 50%; right: -1rem; transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(4rem, 12vw, 9rem); color: rgba(255,255,255,.02); pointer-events: none; white-space: nowrap; }
+    .dash-hero::before { content: 'DASHBOARD'; position: absolute; top: 50%; right: -1rem; transform: translateY(-50%); font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(4rem,12vw,9rem); color: rgba(255,255,255,.02); pointer-events: none; white-space: nowrap; }
     .hero-inner { max-width: 1060px; margin: 0 auto; position: relative; }
     .hero-label { font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--red); margin-bottom: .5rem; }
-    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 400; margin-bottom: .4rem; }
+    .hero-name { font-family: 'Anton', sans-serif; font-style: italic; font-size: clamp(1.8rem,5vw,2.8rem); font-weight: 400; margin-bottom: .4rem; }
     .hero-sub { font-size: .88rem; color: var(--text-dim); font-weight: 300; }
-    .stats-row { max-width: 1060px; margin: 2rem auto 0; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 1rem; }
+    .stats-row { max-width: 1060px; margin: 2rem auto 0; padding: 0 1.5rem; display: grid; grid-template-columns: repeat(auto-fit,minmax(155px,1fr)); gap: 1rem; }
     .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.3rem; border-top: 3px solid var(--red); }
     .stat-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: .3rem; }
     .stat-value { font-family: 'Anton', sans-serif; font-style: italic; font-size: 2rem; font-weight: 400; }
@@ -83,7 +94,7 @@
     .section-head h2 em { color: var(--red); }
     .section-line { flex: 1; height: 1px; background: var(--border); }
 
-    /* Upcoming */
+    /* ── UPCOMING ── */
     .upcoming-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 3rem; }
     .upcoming-top { background: var(--red); padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .8rem; }
     .upcoming-top h3 { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.5rem; font-weight: 400; color: #fff; }
@@ -99,50 +110,60 @@
     .btn-refer { display: inline-flex; align-items: center; gap: .4rem; background: transparent; border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; padding: .72rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 700; text-decoration: none; transition: all .2s; }
     .btn-refer:hover { background: var(--gold-light); }
 
-    /* ── NEW CODE BANNER ── */
-    .new-code-banner {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.2rem 1.5rem;
-      margin-bottom: 2rem;
-      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    }
-    .new-code-banner .banner-label {
-      font-size: .78rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--text-dim); white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .new-code-banner .banner-label em { display: block; font-style: normal; font-size: 1rem; font-weight: 400; color: var(--text); text-transform: none; letter-spacing: 0; margin-top: .15rem; }
-    .new-code-input-wrap { display: flex; gap: .6rem; flex: 1; min-width: 220px; }
-    .new-code-input {
-      flex: 1; background: #111; border: 1.5px solid var(--border);
-      border-radius: 8px; padding: .7rem 1rem;
-      font-family: 'Anybody', sans-serif; font-size: .95rem; font-weight: 700;
-      color: var(--text); outline: none; letter-spacing: .12em;
-      text-transform: uppercase; transition: border-color .2s, box-shadow .2s;
-    }
-    .new-code-input::placeholder { color: #3a3a3a; letter-spacing: .06em; font-weight: 400; }
-    .new-code-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,147,58,.15); }
-    .btn-redeem {
-      background: var(--gold); color: var(--ink); border: none;
-      border-radius: 8px; padding: .7rem 1.3rem;
-      font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 700;
-      cursor: pointer; transition: all .2s; white-space: nowrap;
-    }
-    .btn-redeem:hover { background: #b8822e; transform: translateY(-1px); }
-    .btn-redeem:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-    .code-msg { font-size: .8rem; margin-top: .5rem; display: none; width: 100%; }
-    .code-msg.ok  { color: #6ee7a0; }
-    .code-msg.err { color: #f87171; }
+    /* ── TROPHY CASE ── */
+    .trophy-case { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 3rem; }
+    .trophy-shelf-wrap { padding: 1.8rem 1.5rem 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .trophy-shelf-wrap::-webkit-scrollbar { height: 3px; }
+    .trophy-shelf-wrap::-webkit-scrollbar-track { background: transparent; }
+    .trophy-shelf-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .trophy-shelf { display: flex; gap: 1.4rem; align-items: flex-end; min-width: max-content; }
+    .trophy-item { display: flex; flex-direction: column; align-items: center; width: 84px; position: relative; transition: transform .2s; }
+    .trophy-item.unlocked { cursor: pointer; }
+    .trophy-item.unlocked:hover { transform: translateY(-4px); }
+    .trophy-item.unlocked:hover .trophy-glow { opacity: 1; }
+    .trophy-icon-wrap { width: 58px; height: 72px; position: relative; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .trophy-svg { width: 100%; height: 100%; transition: filter .55s ease; }
+    .trophy-item.locked .trophy-svg { filter: brightness(0) opacity(.18); }
+    .trophy-item.unlocked.active .trophy-svg { filter: drop-shadow(0 2px 10px rgba(201,147,58,.45)); }
+    .trophy-item.unlocked.expired .trophy-svg { filter: brightness(.35) sepia(.4); }
+    .trophy-glow { position: absolute; inset: -6px; border-radius: 50%; background: radial-gradient(circle,rgba(201,147,58,.18) 0%,transparent 70%); pointer-events: none; opacity: 0; transition: opacity .3s; }
+    .trophy-lock { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.25rem; transition: opacity .35s, transform .35s; }
+    .trophy-item.unlocked .trophy-lock { opacity: 0; transform: translate(-50%,-60%) scale(.6); }
+    .trophy-label { font-size: .6rem; text-align: center; line-height: 1.3; margin-top: .55rem; width: 84px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .55s; }
+    .trophy-item.locked .trophy-label { color: #333; }
+    .trophy-item.unlocked.active .trophy-label { color: var(--gold); font-weight: 600; }
+    .trophy-item.unlocked.expired .trophy-label { color: #444; }
+    .trophy-num { font-size: .58rem; color: var(--text-dim); margin-top: .1rem; font-weight: 300; }
+    .trophy-item.locked .trophy-num { color: #2a2a2a; }
+    .shelf-plank { height: 11px; margin: .5rem -1.5rem 0; background: linear-gradient(180deg,#3d2212 0%,#2a160a 60%,#3d2212 100%); border-top: 2px solid #5a3018; box-shadow: 0 6px 18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05); }
+    .trophy-code-row { padding: 1.3rem 1.5rem 1.5rem; display: flex; align-items: center; gap: .8rem; flex-wrap: wrap; }
+    .trophy-code-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+    .trophy-code-label em { display: block; font-style: normal; font-size: .85rem; font-weight: 400; color: var(--text); text-transform: none; letter-spacing: 0; margin-top: .1rem; }
+    .trophy-input-wrap { display: flex; gap: .6rem; flex: 1; min-width: 210px; }
+    .trophy-input { flex: 1; background: #111; border: 1.5px solid var(--border); border-radius: 8px; padding: .7rem 1rem; font-family: 'Anybody', sans-serif; font-size: .95rem; font-weight: 700; color: var(--text); outline: none; letter-spacing: .14em; text-transform: uppercase; transition: border-color .2s,box-shadow .2s; }
+    .trophy-input::placeholder { color: #333; letter-spacing: .06em; font-weight: 400; }
+    .trophy-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,147,58,.15); }
+    .btn-unlock { background: var(--gold); color: var(--ink); border: none; border-radius: 8px; padding: .7rem 1.3rem; font-family: 'Anybody', sans-serif; font-size: .88rem; font-weight: 700; cursor: pointer; transition: all .2s; white-space: nowrap; }
+    .btn-unlock:hover { background: #b8822e; transform: translateY(-1px); }
+    .btn-unlock:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+    .trophy-msg { font-size: .8rem; padding: 0 1.5rem 1rem; display: none; }
+    .trophy-msg.ok { color: #6ee7a0; }
+    .trophy-msg.err { color: #f87171; }
+    @keyframes trophyPop { 0%{transform:scale(.5) translateY(10px);opacity:0} 55%{transform:scale(1.18) translateY(-5px);opacity:1} 75%{transform:scale(.93) translateY(1px)} 100%{transform:scale(1) translateY(0);opacity:1} }
+    @keyframes goldGlow { 0%,100%{filter:drop-shadow(0 2px 8px rgba(201,147,58,.3))} 50%{filter:drop-shadow(0 2px 18px rgba(201,147,58,.85))} }
+    .trophy-item.just-unlocked .trophy-icon-wrap { animation: trophyPop .7s cubic-bezier(.34,1.56,.64,1) both; }
+    .trophy-item.just-unlocked.unlocked.active .trophy-svg { animation: goldGlow 1.4s ease .7s 4; }
 
     /* ── REPLAY CARDS ── */
-    .replay-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.4rem; }
-    .replay-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .25s; animation: cardIn .35s ease both; display: flex; flex-direction: column; }
+    .replay-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap: 1.4rem; }
+    .replay-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color .25s,box-shadow .25s; animation: cardIn .35s ease both; display: flex; flex-direction: column; }
     @keyframes cardIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     .replay-card:hover { border-color: #3a3a3a; }
+    .replay-card.theater-active { border-color: var(--red); box-shadow: 0 0 0 2px rgba(192,24,26,.25); }
     .replay-thumb { position: relative; aspect-ratio: 16/9; background: #1a1a1a; overflow: hidden; cursor: pointer; flex-shrink: 0; }
     .thumb-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
     .thumb-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.3rem; color: rgba(255,255,255,.12); text-align: center; padding: 1rem; line-height: 1.2; }
-    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 100%); }
+    .thumb-overlay { position: absolute; inset: 0; background: linear-gradient(135deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.55) 100%); }
     .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 50px; height: 50px; background: rgba(192,24,26,.88); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 4px 18px rgba(192,24,26,.5); }
     .play-btn svg { width: 18px; height: 18px; fill: #fff; margin-left: 3px; }
     .replay-card:hover .play-btn { transform: translate(-50%,-50%) scale(1.1); }
@@ -161,26 +182,13 @@
     .expiry-note { font-size: .74rem; color: var(--text-dim); }
     .expiry-note.soon { color: var(--gold); font-weight: 600; }
     .expiry-note.expired { color: var(--red); }
-    .watch-btn { display: inline-flex; align-items: center; gap: .3rem; background: none; border: none; padding: 0; color: var(--red); font-family: 'Anybody', sans-serif; font-size: .8rem; font-weight: 700; cursor: pointer; transition: gap .2s; }
+    .watch-btn { display: inline-flex; align-items: center; gap: .3rem; background: none; border: none; padding: 0; color: var(--red); font-family: 'Anybody', sans-serif; font-size: .8rem; font-weight: 700; cursor: pointer; transition: gap .2s,color .2s; line-height: 1; }
     .watch-btn:hover { gap: .5rem; }
     .watch-btn svg { width: 11px; height: 11px; fill: currentColor; }
     .watch-btn.dim { color: var(--text-dim); pointer-events: none; cursor: default; }
+    .watch-btn.now-playing { color: var(--gold); }
 
-    /* ── VIDEO MODAL ── */
-    .video-modal { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.92); align-items: center; justify-content: center; padding: 1.5rem; animation: fadeIn .2s ease; }
-    .video-modal.open { display: flex; }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-    .video-modal-inner { width: 100%; max-width: 900px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.8); animation: slideUp .25s ease; }
-    @keyframes slideUp { from{transform:translateY(24px);opacity:0} to{transform:translateY(0);opacity:1} }
-    .video-modal-header { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.2rem; border-bottom: 1px solid var(--border); }
-    .video-modal-title { font-family: 'Anton', sans-serif; font-style: italic; font-size: 1.1rem; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 3rem); }
-    .video-modal-close { background: none; border: none; color: var(--text-dim); font-size: 1.4rem; cursor: pointer; line-height: 1; padding: .1rem .3rem; transition: color .2s; flex-shrink: 0; }
-    .video-modal-close:hover { color: var(--red); }
-    .video-modal-body { position: relative; aspect-ratio: 16/9; background: #000; }
-    .video-modal-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
-    .video-modal-footer { display: none; }
-
-    /* ── ASSIGNMENT SECTION ── */
+    /* ── ASSIGNMENT ── */
     .assignment-section { border-top: 1px solid var(--border); padding: 1rem 1.15rem; background: rgba(255,255,255,.02); }
     .assignment-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: .75rem; display: flex; align-items: center; gap: .4rem; }
     .assignment-label::before { content: '📝'; font-size: .8rem; }
@@ -203,17 +211,16 @@
     .empty-replays p { font-size: .9rem; line-height: 1.6; font-weight: 300; }
     .hidden { display: none !important; }
 
-
     @media (max-width: 600px) {
       .site-header { padding: .9rem 1rem; }
       .dash-hero { padding: 2rem 1.2rem 1.5rem; }
       .dash-main { padding: 1.8rem 1rem 4rem; }
       .otp-inputs input { width: 42px; height: 50px; font-size: 1.2rem; }
       .replay-grid { grid-template-columns: 1fr; }
-      .video-modal { padding: .5rem; }
-      .video-modal-inner { border-radius: 10px; }
-      .new-code-banner { flex-direction: column; align-items: flex-start; }
-      .new-code-input-wrap { width: 100%; }
+      .theater-title-txt { font-size: .9rem; max-width: calc(100% - 110px); }
+      .theater-close { font-size: .72rem; padding: .4rem .75rem; }
+      .trophy-code-row { flex-direction: column; align-items: flex-start; }
+      .trophy-input-wrap { width: 100%; }
     }
   </style>
 </head>
@@ -279,7 +286,6 @@
       </div>
       <div class="err-msg" id="otp-err"></div>
       <button class="btn btn-red" id="otp-btn" onclick="verifyOTP()">Verify & Sign In →</button>
-      <!-- FIX #8: back button now clears currentEmail so resend always uses current input -->
       <button class="btn btn-ghost" onclick="backToLogin()">← Use a different email</button>
       <div class="countdown" id="otp-countdown">Resend in <span id="countdown-val">60</span>s</div>
     </div>
@@ -288,13 +294,34 @@
 
 <!-- ════════ DASHBOARD ════════ -->
 <div id="dashboard-screen">
-  <header class="site-header">
-    <div class="logo">FO<em>Lectures</em></div>
-    <div class="header-right">
-      <span class="member-pill">★ Member</span>
-      <button class="btn-signout" onclick="signOut()">Sign Out</button>
+
+  <!-- Sticky wrapper keeps header + theater bar pinned together -->
+  <div class="sticky-top">
+    <header class="site-header">
+      <div class="logo">FO<em>Lectures</em></div>
+      <div class="header-right">
+        <span class="member-pill">★ Member</span>
+        <button class="btn-signout" onclick="signOut()">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- ── THEATER BAR ── -->
+    <div class="theater-bar" id="theater-bar">
+      <div class="theater-inner" id="theater-inner">
+        <iframe id="theater-iframe" src=""
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-forms"></iframe>
+        <div class="theater-controls">
+          <div>
+            <div class="theater-label">Now Playing</div>
+            <div class="theater-title-txt" id="theater-title">—</div>
+          </div>
+          <button class="theater-close" onclick="closeTheater()">✕ Exit Theater</button>
+        </div>
+      </div>
     </div>
-  </header>
+  </div>
 
   <div class="dash-hero">
     <div class="hero-inner">
@@ -314,62 +341,40 @@
 
     <!-- UPCOMING -->
     <div class="section-head"><h2>Next <em>Lecture</em></h2><div class="section-line"></div></div>
-    <div class="upcoming-card" id="upcoming-card"><div style="padding:2rem;text-align:center;color:var(--text-dim);">Loading…</div></div>
+    <div class="upcoming-card" id="upcoming-card"><div style="padding:2rem;text-align:center;color:var(--text-dim)">Loading…</div></div>
 
-    <!-- NEW CODE ENTRY -->
-    <div class="section-head" style="margin-top:2.5rem;">
-      <h2>New <em>Code?</em></h2>
+    <!-- TROPHY CASE -->
+    <div class="section-head" style="margin-top:2.5rem">
+      <h2>Your <em>Collection</em></h2>
       <div class="section-line"></div>
     </div>
-    <div class="new-code-banner">
-      <div class="banner-label">
-        Attended another lecture?
-        <em>Enter your new access code to unlock its replay.</em>
+    <div class="trophy-case">
+      <div class="trophy-shelf-wrap">
+        <div class="trophy-shelf" id="trophy-shelf"></div>
+        <div class="shelf-plank"></div>
       </div>
-      <div class="new-code-input-wrap">
-        <input type="text" class="new-code-input" id="new-code-input"
-          placeholder="e.g. MAY2025"
-          onkeydown="if(event.key==='Enter') redeemCode()"/>
-        <button class="btn-redeem" id="redeem-btn" onclick="redeemCode()">Unlock →</button>
+      <div class="trophy-code-row">
+        <div class="trophy-code-label">
+          Got a new code?
+          <em>Enter it to unlock your next replay.</em>
+        </div>
+        <div class="trophy-input-wrap">
+          <input type="text" class="trophy-input" id="trophy-code-input"
+            placeholder="e.g. MAY2026"
+            onkeydown="if(event.key==='Enter') unlockTrophy()"/>
+          <button class="btn-unlock" id="unlock-btn" onclick="unlockTrophy()">Unlock →</button>
+        </div>
       </div>
-      <div class="code-msg" id="code-msg"></div>
+      <div class="trophy-msg" id="trophy-msg"></div>
     </div>
 
     <!-- MY REPLAYS -->
-    <div class="section-head" style="margin-top:2.5rem;"><h2>My <em>Replays</em></h2><div class="section-line"></div></div>
-    <div id="replays-container"><div style="text-align:center;padding:3rem;color:var(--text-dim);"><span class="spinner" style="border-top-color:var(--red);border-color:var(--border);width:24px;height:24px;border-width:3px;"></span></div></div>
+    <div class="section-head" style="margin-top:2.5rem"><h2>My <em>Replays</em></h2><div class="section-line"></div></div>
+    <div id="replays-container"><div style="text-align:center;padding:3rem;color:var(--text-dim)"><span class="spinner" style="border-top-color:var(--red);border-color:var(--border);width:24px;height:24px;border-width:3px"></span></div></div>
 
   </main>
 </div>
 
-<!-- ════════ VIDEO MODAL ════════ -->
-<div class="video-modal" id="video-modal" onclick="closeVideoModal(event)">
-  <div class="video-modal-inner" onclick="event.stopPropagation()">
-    <div class="video-modal-header">
-      <div class="video-modal-title" id="modal-title">—</div>
-      <button class="video-modal-close" onclick="closeVideoModal()">✕</button>
-    </div>
-    <div class="video-modal-body">
-      <!-- FIX: removed referrerpolicy attr — it was stripping the referrer YouTube needs.
-           allow="autoplay" added; no origin= param in embed URL (causes blocks on file:// / unknown domains) -->
-      <iframe id="modal-iframe" src=""
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-forms"></iframe>
-    </div>
-    <div class="video-modal-footer">
-      <span class="modal-hint">Video not loading? Open directly on YouTube →</span>
-      <a id="modal-yt-link" class="btn-open-yt" href="#" target="_blank" rel="noopener noreferrer">
-        ↗ Open in YouTube
-      </a>
-    </div>
-  </div>
-</div>
-
-<!--
-  FIX #1: config.js is loaded with onerror so a missing file is caught cleanly
-  and a visible warning is shown instead of silent breakage.
--->
 <script>
   window.GOOGLE_SCRIPT_URL = '';
   window._configLoaded = false;
@@ -380,55 +385,50 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    GLOBALS
 ───────────────────────────────────────────────────────────────────────────── */
-// FIX #1: safe SCRIPT resolution — warn loudly if missing
 var SCRIPT = (typeof GOOGLE_SCRIPT_URL !== 'undefined' && GOOGLE_SCRIPT_URL)
   ? GOOGLE_SCRIPT_URL : '';
 
-// FIX #6: use localStorage with 12-hour expiry instead of sessionStorage
-var SESSION_KEY     = 'lectureMember_v2';
-var SESSION_EXPIRY  = 12 * 60 * 60 * 1000; // 12 hours in ms
+var SESSION_KEY    = 'lectureMember_v2';
+var SESSION_EXPIRY = 12 * 60 * 60 * 1000;
 
-var currentEmail    = '';
-var countdownTimer  = null;
-var memberEmail     = '';
-var currentVideoUrl = '';
+var currentEmail       = '';
+var countdownTimer     = null;
+var memberEmail        = '';
+var submissionCache    = {};
 
-// Submission status cache — FIX #11: avoid re-fetching on every render
-var submissionCache = {};
+// Theater state
+var _activeTheaterIdx  = -1;
+
+// Trophy state
+var _currentReplays    = [];
+var _prevReplayCount   = 0;
+var MYSTERY_COUNT      = 2;
 
 /* ─────────────────────────────────────────────────────────────────────────────
    INIT
 ───────────────────────────────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', function () {
-
   var saved = loadSession();
-  if (saved) {
-    memberEmail = saved.email;
-    renderDashboard(saved);
-    return;
-  }
+  if (saved) { memberEmail = saved.email; renderDashboard(saved); return; }
   showScreen('screen-register');
 });
 
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') closeVideoModal();
+  if (e.key === 'Escape') closeTheater();
+});
+
+window.addEventListener('resize', function () {
+  var bar = document.getElementById('theater-bar');
+  if (bar.classList.contains('open')) setTheaterHeight(bar);
 });
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   FIX #6: localStorage SESSION with expiry
+   SESSION
 ───────────────────────────────────────────────────────────────────────────── */
 function saveSession(member) {
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({
-      data: member,
-      expires: Date.now() + SESSION_EXPIRY
-    }));
-  } catch (e) {
-    // Private browsing / storage full — fall back to sessionStorage
-    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ data: member, expires: Date.now() + SESSION_EXPIRY })); } catch (_) {}
-  }
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ data: member, expires: Date.now() + SESSION_EXPIRY })); }
+  catch (e) { try { sessionStorage.setItem(SESSION_KEY, JSON.stringify({ data: member, expires: Date.now() + SESSION_EXPIRY })); } catch (_) {} }
 }
-
 function loadSession() {
   try {
     var raw = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
@@ -438,7 +438,6 @@ function loadSession() {
     return obj.data;
   } catch (e) { return null; }
 }
-
 function clearSession() {
   try { localStorage.removeItem(SESSION_KEY); } catch (_) {}
   try { sessionStorage.removeItem(SESSION_KEY); } catch (_) {}
@@ -449,7 +448,7 @@ function clearSession() {
 ───────────────────────────────────────────────────────────────────────────── */
 function showTab(tab) { showScreen(tab === 'register' ? 'screen-register' : 'screen-login'); }
 function showScreen(id) {
-  ['screen-register', 'screen-login', 'screen-otp', 'dashboard-screen'].forEach(function (s) {
+  ['screen-register','screen-login','screen-otp','dashboard-screen'].forEach(function (s) {
     var el = document.getElementById(s);
     if (!el) return;
     el.classList.add('hidden'); el.style.display = '';
@@ -469,23 +468,17 @@ async function submitRegistration() {
   var errEl = document.getElementById('reg-err');
   var infoEl= document.getElementById('reg-info');
   var btn   = document.getElementById('reg-btn');
-
   errEl.style.display = 'none'; infoEl.style.display = 'none';
   if (!name || !email || !phone || !code) { errEl.textContent = 'Please fill in all fields.'; errEl.style.display = 'block'; return; }
   if (!email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
-
-  // FIX #1: guard against missing script URL
   if (!SCRIPT) { errEl.textContent = '⚠️ App not configured. Contact the administrator.'; errEl.style.display = 'block'; return; }
-
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Creating account…';
   try {
     var res  = await fetch(SCRIPT + '?action=register&name=' + enc(name) + '&email=' + enc(email) + '&phone=' + enc(phone) + '&accessCode=' + enc(code));
     var json = await res.json();
     if (json.status === 'ok') {
-      infoEl.textContent = '✅ Account created! You can now sign in.';
-      infoEl.style.display = 'block';
-      btn.innerHTML = '✓ Done — Switch to Sign In';
-      btn.disabled = false;
+      infoEl.textContent = '✅ Account created! You can now sign in.'; infoEl.style.display = 'block';
+      btn.innerHTML = '✓ Done — Switch to Sign In'; btn.disabled = false;
       btn.onclick = function () { showTab('login'); };
       document.getElementById('login-email').value = email;
     } else if (json.status === 'invalid_code') {
@@ -511,13 +504,11 @@ async function requestOTP() {
   errEl.style.display = 'none';
   if (!email || !email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
   if (!SCRIPT) { errEl.textContent = '⚠️ App not configured. Contact the administrator.'; errEl.style.display = 'block'; return; }
-
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Sending…';
   try {
     var res  = await fetch(SCRIPT + '?action=sendOTP&email=' + enc(email));
     var json = await res.json();
     if (json.status === 'ok') {
-      // FIX #8: always capture the email from the input field at the moment of sending
       currentEmail = email;
       document.getElementById('otp-email-show').textContent = email;
       showScreen('screen-otp');
@@ -538,25 +529,18 @@ async function requestOTP() {
    OTP
 ───────────────────────────────────────────────────────────────────────────── */
 function otpNext(input, idx) {
-  // FIX #4: strip non-digits and only advance / auto-submit when a digit is present
   input.value = input.value.replace(/[^0-9]/g, '');
   var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
-  if (input.value.length === 1 && idx < 5) {
-    inputs[idx + 1].focus();
-  }
-  // Only auto-submit when ALL 6 boxes are filled (not just last keyup)
+  if (input.value.length === 1 && idx < 5) inputs[idx + 1].focus();
   if (idx === 5 && input.value.length === 1) {
     var allFilled = [...inputs].every(function (i) { return i.value.length === 1; });
     if (allFilled) verifyOTP();
   }
 }
-
 function otpBack(e, input, idx) {
-  if (e.key === 'Backspace' && !input.value && idx > 0) {
+  if (e.key === 'Backspace' && !input.value && idx > 0)
     document.getElementById('otp-inputs').querySelectorAll('input')[idx - 1].focus();
-  }
 }
-
 async function verifyOTP() {
   var inputs = document.getElementById('otp-inputs').querySelectorAll('input');
   var code   = [...inputs].map(function (i) { return i.value; }).join('');
@@ -564,7 +548,6 @@ async function verifyOTP() {
   var btn    = document.getElementById('otp-btn');
   errEl.style.display = 'none';
   if (code.length < 6) { errEl.textContent = 'Please enter all 6 digits.'; errEl.style.display = 'block'; return; }
-
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Verifying…';
   try {
     var res  = await fetch(SCRIPT + '?action=verifyOTP&email=' + enc(currentEmail) + '&code=' + code);
@@ -573,7 +556,7 @@ async function verifyOTP() {
       clearInterval(countdownTimer);
       memberEmail = json.member.email;
       submissionCache = {};
-      saveSession(json.member); // FIX #6
+      saveSession(json.member);
       renderDashboard(json.member);
     } else {
       errEl.textContent = json.status === 'expired' ? '⏱ Code expired. Request a new one.' : '❌ Incorrect code. Try again.';
@@ -585,19 +568,13 @@ async function verifyOTP() {
   }
   btn.disabled = false; btn.innerHTML = 'Verify & Sign In →';
 }
-
 function backToLogin() {
-  clearInterval(countdownTimer);
-  // FIX #8: clear currentEmail so a fresh email from the input is used on resend
-  currentEmail = '';
-  showScreen('screen-login');
+  clearInterval(countdownTimer); currentEmail = ''; showScreen('screen-login');
 }
-
 function startCountdown() {
   var secs = 60;
   var cdEl = document.getElementById('otp-countdown');
   cdEl.style.display = 'block';
-  // Reset to default state in case it was replaced with a link previously
   cdEl.innerHTML = 'Resend in <span id="countdown-val">60</span>s';
   clearInterval(countdownTimer);
   countdownTimer = setInterval(function () {
@@ -607,80 +584,62 @@ function startCountdown() {
     if (secs <= 0) {
       clearInterval(countdownTimer);
       var cd = document.getElementById('otp-countdown');
-      // FIX #8: resend reads from the login-email field, not stale currentEmail
       if (cd) cd.innerHTML = '<a href="#" onclick="resendOTP();return false;" style="color:var(--gold)">Resend code</a>';
     }
   }, 1000);
 }
-
 function resendOTP() {
-  // FIX #8: use the email shown on the OTP screen (captured when OTP was requested)
-  // Re-trigger requestOTP using the captured currentEmail by briefly setting the field
-  var loginEmailField = document.getElementById('login-email');
-  loginEmailField.value = currentEmail;
-  requestOTP();
+  document.getElementById('login-email').value = currentEmail; requestOTP();
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   FIX #2: REDEEM NEW CODE — dedicated action, not piggyback on register
+   TROPHY CASE — UNLOCK CODE (replaces old redeemCode)
 ───────────────────────────────────────────────────────────────────────────── */
-async function redeemCode() {
-  var code  = document.getElementById('new-code-input').value.trim().toUpperCase();
-  var msgEl = document.getElementById('code-msg');
-  var btn   = document.getElementById('redeem-btn');
+async function unlockTrophy() {
+  var code  = document.getElementById('trophy-code-input').value.trim().toUpperCase();
+  var btn   = document.getElementById('unlock-btn');
+  showTrophyMsg('', '');
 
-  msgEl.style.display = 'none'; msgEl.className = 'code-msg';
+  if (!code) { showTrophyMsg('Please enter your access code.', 'err'); return; }
+  if (!memberEmail) { showTrophyMsg('Session expired. Please sign in again.', 'err'); return; }
+  if (!SCRIPT) { showTrophyMsg('⚠️ App not configured. Contact the administrator.', 'err'); return; }
 
-  if (!code) {
-    msgEl.textContent = 'Please enter your access code.';
-    msgEl.className = 'code-msg err'; msgEl.style.display = 'block'; return;
-  }
-  if (!memberEmail) {
-    msgEl.textContent = 'Session expired. Please sign in again.';
-    msgEl.className = 'code-msg err'; msgEl.style.display = 'block'; return;
-  }
-  if (!SCRIPT) {
-    msgEl.textContent = '⚠️ App not configured. Contact the administrator.';
-    msgEl.className = 'code-msg err'; msgEl.style.display = 'block'; return;
-  }
-
-  btn.disabled = true; btn.innerHTML = '<span class="spinner" style="border-top-color:var(--ink)"></span>';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:var(--ink);border-color:rgba(0,0,0,.2)"></span>';
 
   try {
-    // FIX #2: use a dedicated redeemCode action so the backend doesn't need
-    // name/phone and won't create duplicate or malformed records
-    var res  = await fetch(SCRIPT
-      + '?action=redeemCode'
-      + '&email='      + enc(memberEmail)
-      + '&accessCode=' + enc(code)
-    );
+    var res  = await fetch(SCRIPT + '?action=redeemCode&email=' + enc(memberEmail) + '&accessCode=' + enc(code));
     var json = await res.json();
 
     if (json.status === 'ok') {
-      msgEl.textContent = '✅ Replay unlocked! Refreshing your library…';
-      msgEl.className = 'code-msg ok'; msgEl.style.display = 'block';
-      document.getElementById('new-code-input').value = '';
-      submissionCache = {}; // clear cache so statuses re-fetch for new replay
-      setTimeout(function () { refreshMemberData(); }, 1200);
+      document.getElementById('trophy-code-input').value = '';
+      _prevReplayCount = _currentReplays.length;
+      animateMysteryLock(0);
+      showTrophyMsg('🏆 Replay unlocked! Refreshing your library…', 'ok');
+      submissionCache = {};
+      setTimeout(refreshMemberData, 1200);
     } else if (json.status === 'invalid_code') {
-      msgEl.textContent = '❌ Code not recognised. Please check and try again.';
-      msgEl.className = 'code-msg err'; msgEl.style.display = 'block';
+      showTrophyMsg('❌ Code not recognised. Please check and try again.', 'err');
     } else if (json.status === 'already_redeemed') {
-      msgEl.textContent = '✓ You already have access to this lecture replay.';
-      msgEl.className = 'code-msg ok'; msgEl.style.display = 'block';
+      showTrophyMsg('✓ You already have access to this lecture replay.', 'ok');
     } else {
-      msgEl.textContent = json.message || 'Something went wrong.';
-      msgEl.className = 'code-msg err'; msgEl.style.display = 'block';
+      showTrophyMsg(json.message || 'Something went wrong.', 'err');
     }
   } catch (e) {
-    msgEl.textContent = 'Connection error. Please try again.';
-    msgEl.className = 'code-msg err'; msgEl.style.display = 'block';
+    showTrophyMsg('Connection error. Please try again.', 'err');
   }
   btn.disabled = false; btn.innerHTML = 'Unlock →';
 }
 
+function showTrophyMsg(txt, type) {
+  var el = document.getElementById('trophy-msg');
+  el.textContent = txt;
+  el.className = 'trophy-msg' + (type ? ' ' + type : '');
+  el.style.display = txt ? 'block' : 'none';
+}
+
 /* ─────────────────────────────────────────────────────────────────────────────
-   FIX #5: refreshMemberData — no reload fallback, show inline error instead
+   REFRESH MEMBER DATA
 ───────────────────────────────────────────────────────────────────────────── */
 async function refreshMemberData() {
   if (!SCRIPT || !memberEmail) return;
@@ -688,7 +647,7 @@ async function refreshMemberData() {
     var res  = await fetch(SCRIPT + '?action=getMemberData&email=' + enc(memberEmail));
     var json = await res.json();
     if (json.status === 'ok' && json.member) {
-      saveSession(json.member); // FIX #6
+      saveSession(json.member);
       var replays  = json.member.replays || [];
       var now      = Date.now();
       var active   = replays.filter(function (r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
@@ -696,76 +655,83 @@ async function refreshMemberData() {
       document.getElementById('stat-total').textContent    = replays.length;
       document.getElementById('stat-active').textContent   = active.length;
       document.getElementById('stat-expiring').textContent = expiring.length;
+      _currentReplays = replays;
+      renderTrophies(replays);
       renderReplays(replays);
     } else {
-      // FIX #5: show a non-disruptive inline message instead of a full reload
-      var msgEl = document.getElementById('code-msg');
-      if (msgEl) { msgEl.textContent = '⚠️ Could not refresh. Please sign out and back in if the issue persists.'; msgEl.className = 'code-msg err'; msgEl.style.display = 'block'; }
+      showTrophyMsg('⚠️ Could not refresh. Please sign out and back in if the issue persists.', 'err');
     }
   } catch (e) {
-    var msgEl = document.getElementById('code-msg');
-    if (msgEl) { msgEl.textContent = 'Connection error refreshing library.'; msgEl.className = 'code-msg err'; msgEl.style.display = 'block'; }
+    showTrophyMsg('Connection error refreshing library.', 'err');
   }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   VIDEO MODAL
-   FIX (video): removed origin= param from embed URL — it's the #1 cause of
-   YouTube blocking embeds on unknown/file:// origins. Also removed
-   referrerpolicy="no-referrer-when-downgrade" from the iframe element above.
+   THEATER MODE
 ───────────────────────────────────────────────────────────────────────────── */
-function getYouTubeThumbnail(url) {
-  var videoId = extractYouTubeId(url);
-  return videoId ? 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg' : null;
-}
-
 function extractYouTubeId(url) {
   if (!url) return null;
   try {
     var u = new URL(url);
-    var videoId = null;
-    if (u.hostname === 'youtu.be') {
-      videoId = u.pathname.slice(1).split('?')[0];
-    } else if (u.hostname.includes('youtube.com')) {
-      videoId = u.searchParams.get('v');
-      if (!videoId) {
-        var m = u.pathname.match(/\/(live|shorts|embed)\/([^/?&]+)/);
-        if (m) videoId = m[2];
-      }
+    if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
+    if (u.hostname.includes('youtube.com')) {
+      var v = u.searchParams.get('v');
+      if (v) return v;
+      var m = u.pathname.match(/\/(live|shorts|embed)\/([^/?&]+)/);
+      if (m) return m[2];
     }
-    return videoId || null;
-  } catch (e) { return null; }
+  } catch (e) {}
+  return null;
 }
-
 function toYouTubeEmbed(url) {
-  var videoId = extractYouTubeId(url);
-  if (videoId) {
-    // Uses youtube-nocookie.com — privacy-enhanced mode, no YouTube cookies or branding leakage
-    // autoplay=1 so video starts immediately when modal opens
-    // rel=0 prevents related videos showing at the end
-    // modestbranding=1 hides the YouTube logo during playback
-    // iv_load_policy=3 hides video annotations
-    // controls=1 keeps playback controls visible
-    return 'https://www.youtube-nocookie.com/embed/' + videoId
-      + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&controls=1';
+  var id = extractYouTubeId(url);
+  return id
+    ? 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&controls=1'
+    : url;
+}
+function getYouTubeThumbnail(url) {
+  var id = extractYouTubeId(url);
+  return id ? 'https://img.youtube.com/vi/' + id + '/hqdefault.jpg' : null;
+}
+function setTheaterHeight(bar) {
+  var h = Math.max(Math.min(window.innerWidth * 0.5625, window.innerHeight * 0.68), 180);
+  bar.style.height = h + 'px';
+  document.getElementById('theater-inner').style.height = h + 'px';
+}
+function openTheater(videoUrl, title, idx) {
+  var bar = document.getElementById('theater-bar');
+  document.getElementById('theater-title').textContent = title || 'Lecture Replay';
+  document.getElementById('theater-iframe').src = toYouTubeEmbed(videoUrl);
+  bar.style.height = '0px';
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      bar.classList.add('open');
+      setTheaterHeight(bar);
+    });
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (_activeTheaterIdx >= 0) clearTheaterHighlight(_activeTheaterIdx);
+  _activeTheaterIdx = idx;
+  var card = document.getElementById('rcard-' + idx);
+  if (card) card.classList.add('theater-active');
+  var btn = document.getElementById('wbtn-' + idx);
+  if (btn) { btn.classList.add('now-playing'); btn.innerHTML = '▶ Now Playing'; }
+}
+function closeTheater() {
+  var bar = document.getElementById('theater-bar');
+  bar.style.height = '0';
+  bar.classList.remove('open');
+  setTimeout(function () { document.getElementById('theater-iframe').src = ''; }, 450);
+  if (_activeTheaterIdx >= 0) { clearTheaterHighlight(_activeTheaterIdx); _activeTheaterIdx = -1; }
+}
+function clearTheaterHighlight(idx) {
+  var card = document.getElementById('rcard-' + idx);
+  if (card) card.classList.remove('theater-active');
+  var btn = document.getElementById('wbtn-' + idx);
+  if (btn) {
+    btn.classList.remove('now-playing');
+    btn.innerHTML = 'Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>';
   }
-  return url;
-}
-
-function openVideoModal(videoUrl, title) {
-  currentVideoUrl = videoUrl;
-  var embedUrl = toYouTubeEmbed(videoUrl);
-  document.getElementById('modal-title').textContent = title || 'Lecture Replay';
-  document.getElementById('modal-iframe').src         = embedUrl;
-  document.getElementById('modal-yt-link').href       = videoUrl;
-  document.getElementById('video-modal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeVideoModal(e) {
-  document.getElementById('video-modal').classList.remove('open');
-  document.getElementById('modal-iframe').src = '';
-  document.body.style.overflow = '';
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -773,56 +739,37 @@ function closeVideoModal(e) {
 ───────────────────────────────────────────────────────────────────────────── */
 function renderDashboard(member) {
   showScreen('dashboard-screen');
-  var replays = member.replays || [];
-  var now     = Date.now();
-
-  document.getElementById('hero-name').textContent = member.name || member.email;
-  document.getElementById('hero-sub').textContent  = replays.length
-    ? 'You have ' + replays.length + ' replay' + (replays.length !== 1 ? 's' : '') + ' in your library.'
-    : 'Your replays will appear here after attending a lecture.';
-
-  var active   = replays.filter(function (r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
+  _currentReplays = member.replays || [];
+  var now      = Date.now();
+  var active   = _currentReplays.filter(function (r) { return !r.expiryDate || new Date(r.expiryDate) > now; });
   var expiring = active.filter(function (r) { return r.expiryDate && (new Date(r.expiryDate) - now) < 30 * 86400000; });
-
-  document.getElementById('stat-total').textContent    = replays.length;
+  document.getElementById('hero-name').textContent = member.name || member.email;
+  document.getElementById('hero-sub').textContent  = _currentReplays.length
+    ? 'You have ' + _currentReplays.length + ' replay' + (_currentReplays.length !== 1 ? 's' : '') + ' in your library.'
+    : 'Your replays will appear here after attending a lecture.';
+  document.getElementById('stat-total').textContent    = _currentReplays.length;
   document.getElementById('stat-active').textContent   = active.length;
   document.getElementById('stat-expiring').textContent = expiring.length;
-
   renderUpcoming(member.upcoming);
-  renderReplays(replays);
+  renderTrophies(_currentReplays);
+  renderReplays(_currentReplays);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   FIX #3: registerUrl sanitised — reject javascript: and data: schemes
+   UPCOMING
 ───────────────────────────────────────────────────────────────────────────── */
 function safeUrl(url) {
   if (!url) return '#';
-  try {
-    var u = new URL(url);
-    // Only allow safe protocols
-    if (u.protocol !== 'https:' && u.protocol !== 'http:') return '#';
-    return url;
-  } catch (e) { return '#'; }
+  try { var u = new URL(url); if (u.protocol !== 'https:' && u.protocol !== 'http:') return '#'; return url; }
+  catch (e) { return '#'; }
 }
-
 function renderUpcoming(u) {
   var card = document.getElementById('upcoming-card');
-
-  // Normalise — Google Sheets sometimes returns keys with different casing
-  // or the upcoming object may be nested under a key
-  if (u && typeof u === 'object' && !u.title && !u.Title) {
-    // Try common nesting patterns
-    u = u.upcoming || u.Upcoming || u.data || u.Data || u;
-  }
   if (u && typeof u === 'object') {
-    // Normalise keys to lowercase so Title / title / TITLE all work
-    var norm = {};
-    Object.keys(u).forEach(function(k) { norm[k.toLowerCase()] = u[k]; });
-    u = norm;
+    var norm = {}; Object.keys(u).forEach(function (k) { norm[k.toLowerCase()] = u[k]; }); u = norm;
   }
-
   if (!u || !u.title) {
-    card.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem;">No upcoming lecture scheduled yet — check back soon.</div>';
+    card.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--text-dim);font-size:.9rem">No upcoming lecture scheduled yet — check back soon.</div>';
     return;
   }
   card.innerHTML =
@@ -841,14 +788,84 @@ function renderUpcoming(u) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
-   FIX #7: onclick attrs replaced with data- attributes + event delegation
+   TROPHY CASE — RENDER
 ───────────────────────────────────────────────────────────────────────────── */
-// Replay card data store — keyed by index
+function buildTrophySVG(gradId) {
+  return '<svg class="trophy-svg" viewBox="0 0 60 80" fill="none" xmlns="http://www.w3.org/2000/svg">'
+    + '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">'
+    + '<stop offset="0%" stop-color="#f7d76e"/><stop offset="100%" stop-color="#c9933a"/>'
+    + '</linearGradient></defs>'
+    + '<path d="M13 7 H47 L43 49 H17 Z" fill="url(#' + gradId + ')"/>'
+    + '<path d="M13 13 C3 13 3 37 13 37" stroke="url(#' + gradId + ')" stroke-width="3.5" stroke-linecap="round" fill="none"/>'
+    + '<path d="M47 13 C57 13 57 37 47 37" stroke="url(#' + gradId + ')" stroke-width="3.5" stroke-linecap="round" fill="none"/>'
+    + '<rect x="24" y="49" width="12" height="14" fill="url(#' + gradId + ')"/>'
+    + '<rect x="14" y="63" width="32" height="9" rx="3" fill="url(#' + gradId + ')"/>'
+    + '<path d="M21 17 L26 34" stroke="rgba(255,255,255,.28)" stroke-width="2.5" stroke-linecap="round"/>'
+    + '<circle cx="36" cy="21" r="3.5" fill="rgba(255,255,255,.15)"/>'
+    + '</svg>';
+}
+
+function renderTrophies(replays) {
+  var shelf = document.getElementById('trophy-shelf');
+  var now   = Date.now();
+  var html  = '';
+
+  replays.forEach(function (r, i) {
+    var expired = r.expiryDate && new Date(r.expiryDate) <= now;
+    var isNew   = i >= _prevReplayCount;
+    var cls     = 'trophy-item unlocked ' + (expired ? 'expired' : 'active') + (isNew ? ' just-unlocked' : '');
+    html += '<div class="' + cls + '" id="troph-' + i + '" data-tidx="' + i + '" title="' + esc(r.title) + '">'
+      + '<div class="trophy-icon-wrap">' + buildTrophySVG('tgr' + i) + '<div class="trophy-glow"></div></div>'
+      + '<div class="trophy-label">' + esc(r.title) + '</div>'
+      + '<div class="trophy-num">' + esc(r.lectureDate) + '</div>'
+      + '</div>';
+  });
+
+  for (var m = 0; m < MYSTERY_COUNT; m++) {
+    html += '<div class="trophy-item locked" id="mystery-' + m + '">'
+      + '<div class="trophy-icon-wrap">' + buildTrophySVG('tgm' + m) + '<span class="trophy-lock">🔒</span></div>'
+      + '<div class="trophy-label">???</div>'
+      + '<div class="trophy-num">???</div>'
+      + '</div>';
+  }
+
+  shelf.innerHTML = html;
+
+  // Remove just-unlocked class after animation completes
+  if (_prevReplayCount < replays.length) {
+    setTimeout(function () {
+      replays.forEach(function (_, i) {
+        var el = document.getElementById('troph-' + i);
+        if (el) el.classList.remove('just-unlocked');
+      });
+    }, 4000);
+  }
+
+  shelf.onclick = function (e) {
+    var el = e.target.closest('[data-tidx]');
+    if (!el) return;
+    var idx = parseInt(el.dataset.tidx, 10);
+    var card = document.getElementById('rcard-' + idx);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+}
+
+function animateMysteryLock(mysteryIdx) {
+  var el = document.getElementById('mystery-' + mysteryIdx);
+  if (!el) return;
+  var lock = el.querySelector('.trophy-lock');
+  if (lock) { lock.style.transition = 'opacity .3s, transform .35s'; lock.style.opacity = '0'; lock.style.transform = 'translate(-50%,-60%) scale(.5)'; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   REPLAY CARDS
+───────────────────────────────────────────────────────────────────────────── */
 var _replayData = {};
 
 function renderReplays(replays) {
-  _replayData = {}; // reset store
+  _replayData = {};
   var container = document.getElementById('replays-container');
+
   if (!replays.length) {
     container.innerHTML = '<div class="empty-replays"><div class="icon">🎬</div><p>No replays yet.<br/>Attend a lecture and enter your access code above to unlock replays.</p></div>';
     return;
@@ -858,7 +875,6 @@ function renderReplays(replays) {
   var html = '<div class="replay-grid">';
 
   replays.forEach(function (r, idx) {
-    // Store data safely — no inline JSON in onclick
     _replayData[idx] = { videoUrl: r.videoUrl || '', title: r.title || '', lectureId: r.lectureId || '' };
 
     var expDate  = r.expiryDate ? new Date(r.expiryDate) : null;
@@ -878,14 +894,10 @@ function renderReplays(replays) {
     var watchBtn = expired
       ? '<span class="watch-btn dim">Expired</span>'
       : r.videoUrl
-        // FIX #7: data attribute instead of inline JSON in onclick
-        ? '<button class="watch-btn" data-action="play" data-idx="' + idx + '">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>'
+        ? '<button class="watch-btn" id="wbtn-' + idx + '" data-action="play" data-idx="' + idx + '">Watch <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg></button>'
         : '<span class="watch-btn dim">Coming soon</span>';
 
-    var thumbClickAttr = (!expired && r.videoUrl)
-      ? 'data-action="play" data-idx="' + idx + '"'
-      : '';
-
+    var thumbClickAttr = (!expired && r.videoUrl) ? 'data-action="play" data-idx="' + idx + '"' : '';
     var ytThumb = getYouTubeThumbnail(r.videoUrl);
     var thumbImgHtml = ytThumb
       ? '<img class="thumb-img" src="' + ytThumb + '" alt="' + esc(r.title) + '" loading="lazy" onerror="this.src=this.src.replace(\'hqdefault\',\'mqdefault\');this.onerror=function(){this.style.display=\'none\';}"/>'
@@ -897,7 +909,6 @@ function renderReplays(replays) {
         '<div class="assignment-section" id="asgn-' + idx + '">'
         + '<div class="assignment-label">Assignment</div>'
         + '<div class="assignment-actions">'
-        // FIX #9: rel="noopener noreferrer" on all external links
         + '<a class="btn-assignment btn-get" href="' + safeUrl(r.assignmentUrl) + '" target="_blank" rel="noopener noreferrer">📥 Get Assignment</a>'
         + '<button class="btn-assignment btn-upload" data-action="upload" data-idx="' + idx + '" id="upload-btn-' + idx + '">⬆ Upload Submission</button>'
         + '<input type="file" class="file-input" id="file-input-' + idx + '" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"/>'
@@ -908,13 +919,13 @@ function renderReplays(replays) {
     }
 
     html +=
-      '<div class="replay-card">'
+      '<div class="replay-card" id="rcard-' + idx + '">'
       + '<div class="replay-thumb" ' + thumbClickAttr + '>'
       + thumbImgHtml
       + '<div class="thumb-fallback">' + esc(r.title).toUpperCase() + '</div>'
       + '<div class="thumb-overlay"></div>'
       + '<span class="status-tag ' + tagCls + '">' + tagTxt + '</span>'
-      + (!expired && r.videoUrl ? '<div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
+      + (!expired && r.videoUrl ? '<div class="play-btn" data-action="play" data-idx="' + idx + '"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" fill="#fff"/></svg></div>' : '')
       + (r.duration ? '<span class="duration-tag">' + esc(r.duration) + '</span>' : '')
       + '</div>'
       + '<div class="replay-body">'
@@ -930,28 +941,24 @@ function renderReplays(replays) {
   html += '</div>';
   container.innerHTML = html;
 
-  // FIX #7: single delegated event listener instead of inline handlers
-  container.addEventListener('click', function (e) {
+  container.onclick = function (e) {
     var el = e.target.closest('[data-action]');
     if (!el) return;
     var action = el.dataset.action;
     var idx    = parseInt(el.dataset.idx, 10);
     var d      = _replayData[idx];
     if (!d) return;
-
     if (action === 'play') {
-      openVideoModal(d.videoUrl, d.title);
+      openTheater(d.videoUrl, d.title, idx);
     } else if (action === 'upload') {
       var fileInput = document.getElementById('file-input-' + idx);
       if (fileInput) {
-        // FIX: attach onchange dynamically so lectureId is safely scoped
         fileInput.onchange = function () { handleFileUpload(fileInput, idx, d.lectureId); };
         fileInput.click();
       }
     }
-  });
+  };
 
-  // FIX #11: check submission status only once per lectureId (cached)
   replays.forEach(function (r, idx) {
     if (r.assignmentUrl && (!r.expiryDate || new Date(r.expiryDate) > now)) {
       checkSubmissionStatus(idx, r.lectureId);
@@ -963,54 +970,41 @@ function renderReplays(replays) {
    ASSIGNMENT UPLOAD
 ───────────────────────────────────────────────────────────────────────────── */
 async function handleFileUpload(input, idx, lectureId) {
-  var file       = input.files[0];
+  var file        = input.files[0];
   if (!file) return;
-  var uploadBtn  = document.getElementById('upload-btn-' + idx);
-  var progressEl = document.getElementById('progress-' + idx);
-  var progressBar= document.getElementById('progress-bar-' + idx);
-  var errEl      = document.getElementById('upload-err-' + idx);
-
+  var uploadBtn   = document.getElementById('upload-btn-' + idx);
+  var progressEl  = document.getElementById('progress-' + idx);
+  var progressBar = document.getElementById('progress-bar-' + idx);
+  var errEl       = document.getElementById('upload-err-' + idx);
   if (file.size > 10 * 1024 * 1024) { errEl.textContent = 'File too large. Max 10MB.'; errEl.style.display = 'block'; return; }
-
   errEl.style.display = 'none';
-  uploadBtn.className = 'btn-assignment btn-uploading';
-  uploadBtn.textContent = 'Uploading…'; uploadBtn.disabled = true;
+  uploadBtn.className = 'btn-assignment btn-uploading'; uploadBtn.textContent = 'Uploading…'; uploadBtn.disabled = true;
   progressEl.style.display = 'block';
-
   var pct = 0;
   var progressTimer = setInterval(function () { pct = Math.min(pct + 3, 85); progressBar.style.width = pct + '%'; }, 100);
-
   try {
     var base64   = await readFileAsBase64(file);
     var formData = new URLSearchParams();
-    formData.append('action',    'uploadSubmission');
-    formData.append('email',     memberEmail);
-    formData.append('lectureId', lectureId);
-    formData.append('fileName',  file.name);
-    formData.append('mimeType',  file.type || 'application/octet-stream');
-    formData.append('fileData',  base64);
-
+    formData.append('action', 'uploadSubmission'); formData.append('email', memberEmail);
+    formData.append('lectureId', lectureId);       formData.append('fileName', file.name);
+    formData.append('mimeType', file.type || 'application/octet-stream'); formData.append('fileData', base64);
     var res  = await fetch(SCRIPT, { method: 'POST', body: formData });
     var json = await res.json();
     clearInterval(progressTimer); progressBar.style.width = '100%';
-
     if (json.status === 'ok') {
-      submissionCache[lectureId] = true; // FIX #11: cache result
+      submissionCache[lectureId] = true;
       setTimeout(function () {
         progressEl.style.display = 'none'; progressBar.style.width = '0%';
-        uploadBtn.className = 'btn-assignment btn-submitted';
-        uploadBtn.textContent = '✓ Submitted'; uploadBtn.disabled = true;
+        uploadBtn.className = 'btn-assignment btn-submitted'; uploadBtn.textContent = '✓ Submitted'; uploadBtn.disabled = true;
       }, 400);
     } else { throw new Error(json.message || 'Upload failed'); }
   } catch (e) {
     clearInterval(progressTimer); progressEl.style.display = 'none'; progressBar.style.width = '0%';
-    uploadBtn.className = 'btn-assignment btn-upload';
-    uploadBtn.textContent = '⬆ Upload Submission'; uploadBtn.disabled = false;
+    uploadBtn.className = 'btn-assignment btn-upload'; uploadBtn.textContent = '⬆ Upload Submission'; uploadBtn.disabled = false;
     errEl.textContent = 'Upload failed: ' + e.message; errEl.style.display = 'block';
   }
   input.value = '';
 }
-
 function readFileAsBase64(file) {
   return new Promise(function (resolve, reject) {
     var reader = new FileReader();
@@ -1019,28 +1013,17 @@ function readFileAsBase64(file) {
     reader.readAsDataURL(file);
   });
 }
-
-/* ─────────────────────────────────────────────────────────────────────────────
-   FIX #11: check submission status — cached, no redundant API calls
-───────────────────────────────────────────────────────────────────────────── */
 async function checkSubmissionStatus(idx, lectureId) {
   if (!memberEmail || !SCRIPT || !lectureId) return;
-
-  // Use cache if already fetched this session
-  if (submissionCache[lectureId] !== undefined) {
-    if (submissionCache[lectureId]) markSubmitted(idx);
-    return;
-  }
-
+  if (submissionCache[lectureId] !== undefined) { if (submissionCache[lectureId]) markSubmitted(idx); return; }
   try {
     var res  = await fetch(SCRIPT + '?action=getSubmission&email=' + enc(memberEmail) + '&lectureId=' + enc(lectureId));
     var json = await res.json();
     var submitted = json.status === 'ok' && json.submitted;
-    submissionCache[lectureId] = submitted; // FIX #11: cache it
+    submissionCache[lectureId] = submitted;
     if (submitted) markSubmitted(idx);
   } catch (e) {}
 }
-
 function markSubmitted(idx) {
   var btn = document.getElementById('upload-btn-' + idx);
   if (btn) { btn.className = 'btn-assignment btn-submitted'; btn.textContent = '✓ Submitted'; btn.disabled = true; }
@@ -1050,9 +1033,8 @@ function markSubmitted(idx) {
    SIGN OUT
 ───────────────────────────────────────────────────────────────────────────── */
 function signOut() {
-  clearSession(); // FIX #6: clears localStorage too
-  memberEmail = '';
-  submissionCache = {};
+  clearSession(); memberEmail = ''; submissionCache = {}; _currentReplays = []; _prevReplayCount = 0;
+  closeTheater();
   showScreen('screen-register');
 }
 
